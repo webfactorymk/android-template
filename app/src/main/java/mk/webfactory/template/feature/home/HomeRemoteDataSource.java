@@ -2,7 +2,6 @@ package mk.webfactory.template.feature.home;
 
 import io.reactivex.Completable;
 import io.reactivex.Maybe;
-import mk.webfactory.template.network.api.UserService;
 
 import static mk.webfactory.template.util.Preconditions.checkNotNull;
 

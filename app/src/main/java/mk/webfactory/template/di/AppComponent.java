@@ -10,8 +10,6 @@ import mk.webfactory.template.App;
 import mk.webfactory.template.data.DataModule;
 import mk.webfactory.template.network.NetworkModule;
 import mk.webfactory.template.network.api.ServiceModule;
-import mk.webfactory.template.user.UserManager;
-import mk.webfactory.template.user.UserModule;
 
 @Singleton
 @Component(modules = {

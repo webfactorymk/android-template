@@ -6,7 +6,6 @@ import javax.inject.Inject;
 import mk.webfactory.template.R;
 import mk.webfactory.template.feature.common.ui.BaseActivity;
 import mk.webfactory.template.feature.home.ui.HomeActivity;
-import mk.webfactory.template.user.UserManager;
 
 public class LauncherActivity extends BaseActivity {
 

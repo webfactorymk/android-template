@@ -1,8 +1,9 @@
 package mk.webfactory.template.feature.common.ui;
 
-import static mk.webfactory.template.util.Preconditions.checkArgument;
-import static mk.webfactory.template.util.Preconditions.checkNotNull;
-import static mk.webfactory.template.util.Preconditions.checkState;
+import static androidx.core.util.Preconditions.checkArgument;
+import static androidx.core.util.Preconditions.checkState;
+import static dagger.internal.Preconditions.checkNotNull;
+
 
 /**
  * @deprecated - We'll use view model
