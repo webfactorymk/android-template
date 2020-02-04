@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Content description / Accessibility strings -->
+
+    <string name="acc_back">Back</string>
+</resources>
