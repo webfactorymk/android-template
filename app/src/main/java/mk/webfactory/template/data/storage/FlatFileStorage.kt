@@ -11,12 +11,18 @@ import java.io.File
 import java.lang.reflect.Type
 
 /** [Storage] that saves and retrieves an object from a file.  */
-class FlatFileStorage<T>(private val type: Type, private val contentFile: File, private val parser: JsonConverter) : Storage<T> {
+class FlatFileStorage<T>(
+        private val type: Type,
+        private val contentFile: File,
+        private val parser: JsonConverter) : Storage<T> {
 
     private val storeInFieldLock = Any()
     private var content: T? = null
     private var contentDeleted = false
     private lateinit var retrieveDataObservable: Observable<T>
+
+    override val isLocal: Boolean = true
+    override var storageId: String = FlatFileStorage::class.java.simpleName
 
     override fun save(t: T): Observable<T> {
         return Observable.create(ObservableOnSubscribe { subscriber ->
@@ -87,21 +93,4 @@ class FlatFileStorage<T>(private val type: Type, private val contentFile: File, 
             }
         }
     }
-
-    override val isLocal: Boolean
-        get() = true
-
-    override var storageId: String? = null
-        get() {
-            if (field == null) {
-                field = "$TAG:$type"
-            }
-            return field
-        }
-        private set
-
-    companion object {
-        private val TAG = FlatFileStorage::class.java.simpleName
-    }
-
 }

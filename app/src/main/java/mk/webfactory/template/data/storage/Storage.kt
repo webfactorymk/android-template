@@ -30,5 +30,5 @@ interface Storage<T> {
     val isLocal: Boolean
 
     /** Returns the identifier that uniquely identifies this type of Storage.  */
-    val storageId: String?
+    val storageId: String
 }

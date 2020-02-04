@@ -45,7 +45,7 @@ class App : DaggerApplication() {
 
             //Fixme: use firebase crashlytics
 
-            throw UnsupportedOperationException("Not imeplemented yet")
+            throw UnsupportedOperationException("Not implemented yet")
 
             // val crashlytics = Crashlytics()
             // Fabric.with(
