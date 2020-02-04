@@ -1,11 +1,12 @@
 package mk.webfactory.template.user
 
+import androidx.annotation.CheckResult
+import io.reactivex.Completable
 import io.reactivex.Observable
 import mk.webfactory.template.data.storage.Storage
 
-class UserStore<U>(_inner: Storage<U>) {
+class UserStore<U>(private val inner: Storage<U>) {
 
-    private var inner: Storage<U> = _inner
     private var cachedUser: U? = null
     private var isUserFetched = false
 
@@ -13,6 +14,7 @@ class UserStore<U>(_inner: Storage<U>) {
         isUserFetched = false
     }
 
+    @CheckResult
     fun get(): Observable<U>? {
         return if (isUserFetched) {
             Observable.just(cachedUser)
@@ -24,14 +26,16 @@ class UserStore<U>(_inner: Storage<U>) {
         }
     }
 
-    fun save(user: U): Observable<U>? {
+    @CheckResult
+    fun save(user: U): Observable<U> {
         return inner.save(user)?.doOnNext { t ->
             cachedUser = t
             isUserFetched = true
         }
     }
 
-    fun delete() {
+    @CheckResult
+    fun delete(): Completable {
         inner.delete()
     }
 }

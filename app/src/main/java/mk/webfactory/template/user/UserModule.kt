@@ -6,32 +6,40 @@ import dagger.Module
 import dagger.Provides
 import io.reactivex.Observable
 import io.reactivex.subjects.BehaviorSubject
+import mk.webfactory.template.config.USER_DATA_FILE
 import mk.webfactory.template.data.storage.FlatFileStorage
 import mk.webfactory.template.data.storage.JsonConverter
 import mk.webfactory.template.data.storage.JsonConverter.GsonConverter
 import mk.webfactory.template.data.storage.Storage
 import mk.webfactory.template.di.qualifier.ApplicationContext
+import mk.webfactory.template.di.qualifier.Internal
 import java.io.File
-import java.lang.annotation.Documented
 import javax.inject.Named
-import javax.inject.Qualifier
 import javax.inject.Singleton
 
 @Module
 class UserModule {
-    @Qualifier
-    @Documented
-    @kotlin.annotation.Retention(AnnotationRetention.RUNTIME)
-    internal annotation class Internal
 
-    private val userUpdateStream =
-        BehaviorSubject.create<UserDataWrapper>()
+    private val userUpdateStream = BehaviorSubject.create<UserDataWrapper>()
+
+    @Provides
+    @Named("user_updates")
+    fun provideUserUpdateStream(): Observable<UserDataWrapper> {
+        return userUpdateStream.hide()
+    }
+
+    @Provides
+    @Internal
+    @Named("user_updates")
+    fun provideUserUpdateStreamSource(): BehaviorSubject<UserDataWrapper> {
+        return userUpdateStream
+    }
 
     @Provides
     @Singleton
     fun provideFlatFileStorage(@ApplicationContext context: Context): Storage<UserDataWrapper> {
         val userFile =
-            File(context.filesDir, GlobalConfig.USER_DATA_FILE)
+            File(context.filesDir, USER_DATA_FILE)
         val jsonConverter: JsonConverter = GsonConverter(Gson())
         return FlatFileStorage(
             UserDataWrapper::class.java,
@@ -41,14 +49,11 @@ class UserModule {
     }
 
     @Provides
-    @Named("user_update_stream")
-    fun provideUserUpdateStream(): Observable<UserDataWrapper> {
-        return userUpdateStream.hide()
-    }
-
-    @Provides
-    @Internal
-    fun provideUserUpdateStreamSource(): BehaviorSubject<UserDataWrapper> {
-        return userUpdateStream
+    @Singleton
+    fun provideUserManager(
+        @Internal @Named("user_updates") userUpdates: BehaviorSubject<UserDataWrapper>,
+        userStorage: Storage<UserDataWrapper>
+    ): UserManager<UserDataWrapper> {
+        return UserManager(userUpdates, userStorage)
     }
 }
