@@ -10,6 +10,32 @@ import javax.inject.Inject
 
 /**
  * Monitors the [UserSession] state and creates and tears down the [UserScopeComponent].
+ * Initialize in [App.onCreate] and fetch [userScopeComponent] (nullable) when needed.
+ *
+ * Example usage with dagger-android:
+ * ```
+ * class App : DaggerApplication() {
+ *
+ *     @Inject
+ *     lateinit var userScopeMonitor: UserScopeMonitor
+ *
+ *      override fun onCreate() {
+ *          super.onCreate()
+ *          userScopeMonitor.init()
+ *          // ...
+ *      }
+ *
+ *     override fun androidInjector(): AndroidInjector<Any> {
+ *         return userScopeMonitor.userScopeComponent?.androidInjector
+ *             ?: super.androidInjector()
+ *     }
+ *
+ *    override fun applicationInjector(): AndroidInjector<out DaggerApplication> {
+ *        return DaggerAppComponent.builder().application(this).build()
+ *            .also({ appComponent = it })
+ *    }
+ * }
+ * ```
  */
 class UserScopeMonitor @Inject constructor(
     private val userManager: UserManager<UserSession>,
@@ -43,6 +69,14 @@ class UserScopeMonitor @Inject constructor(
                     userScopeComponent = null
                 }
             }
+    }
+
+    /**
+     * Stops monitoring user's session state and destroys [userScopeComponent].
+     */
+    fun destroy() {
+        userUpdatesDisposable.safeDispose()
+        userScopeComponent = null
     }
 
     private fun createUserScopeComponent(user: User) {
