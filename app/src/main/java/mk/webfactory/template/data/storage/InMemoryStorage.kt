@@ -1,30 +1,32 @@
 package mk.webfactory.template.data.storage
 
 import io.reactivex.Completable
-import io.reactivex.Observable
-import mk.webfactory.template.data.rx.Observables.safeCompleteAfterPublish
+import io.reactivex.Single
 import mk.webfactory.template.data.rx.Observables.safeCompleted
-import mk.webfactory.template.data.rx.Observables.safeEndWithError
 
-class InMemoryStorage <T> : Storage<T> {
+class InMemoryStorage<T> : Storage<T> {
 
     private var content: T? = null
     private var contentDeleted = false
     private var deleteCompletable: Completable? = null
 
-    override fun save(t: T): Observable<T> {
-        return Observable.just(t).doOnNext { t ->
+    override val isLocal: Boolean = true
+    override var storageId: String = FlatFileStorage::class.java.simpleName
+
+    override fun save(t: T): Single<T> {
+        return Single.fromCallable {
             content = t
             contentDeleted = false
+            content
         }
     }
 
-    override fun retrieve(): Observable<T> {
-        return Observable.create { subscriber ->
+    override fun retrieve(): Single<T> {
+        return Single.fromCallable {
             if (content == null && !contentDeleted) {
-                safeEndWithError(subscriber, StorageException())
+                throw StorageException()
             } else {
-                safeCompleteAfterPublish(subscriber, content)
+                content
             }
         }
     }
@@ -39,21 +41,5 @@ class InMemoryStorage <T> : Storage<T> {
             }
         }
         return deleteCompletable!!
-    }
-
-    override val isLocal: Boolean
-        get() = true
-
-    override var storageId: String? = null
-        get() {
-            if (field == null) {
-                field = "$TAG:" + (if (content != null) content::class.java else "")
-            }
-            return field
-        }
-        private set
-
-    companion object {
-        private val TAG = InMemoryStorage::class.java.simpleName
     }
 }

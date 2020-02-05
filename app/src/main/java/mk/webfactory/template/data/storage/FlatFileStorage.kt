@@ -3,8 +3,7 @@ package mk.webfactory.template.data.storage
 import android.text.TextUtils
 import io.reactivex.Completable
 import io.reactivex.Observable
-import io.reactivex.ObservableOnSubscribe
-import mk.webfactory.template.data.rx.Observables.safeCompleteAfterPublish
+import io.reactivex.Single
 import mk.webfactory.template.data.rx.Observables.safeCompleted
 import mk.webfactory.template.data.rx.Observables.safeEndWithError
 import java.io.File
@@ -12,9 +11,9 @@ import java.lang.reflect.Type
 
 /** [Storage] that saves and retrieves an object from a file.  */
 class FlatFileStorage<T>(
-        private val type: Type,
-        private val contentFile: File,
-        private val parser: JsonConverter) : Storage<T> {
+    private val type: Type,
+    private val contentFile: File,
+    private val parser: JsonConverter) : Storage<T> {
 
     private val storeInFieldLock = Any()
     private var content: T? = null
@@ -24,57 +23,46 @@ class FlatFileStorage<T>(
     override val isLocal: Boolean = true
     override var storageId: String = FlatFileStorage::class.java.simpleName
 
-    override fun save(t: T): Observable<T> {
-        return Observable.create(ObservableOnSubscribe { subscriber ->
-            if (t == null) {
-                safeEndWithError(subscriber, StorageException())
-                return@ObservableOnSubscribe
+    override fun save(t: T): Single<T> {
+        return Single.fromCallable {
+            val contentString = parser.toJson(t!!)
+            writeUtf8(contentString, contentFile)
+
+            synchronized(storeInFieldLock) {
+                content = t
+                contentDeleted = false
             }
-            val successful: Boolean
-            successful = try {
-                val contentString = parser.toJson(t)
-                Util.writeUtf8(contentString, contentFile)
-            } catch (e: Exception) {
-                false
-            }
-            if (successful) {
-                synchronized(storeInFieldLock) {
-                    content = t
-                    contentDeleted = false
-                    safeCompleteAfterPublish(subscriber, content)
-                }
-            }
-        })
+            content
+        }
     }
 
-    override fun retrieve(): Observable<T> {
-        retrieveDataObservable = Observable.create(ObservableOnSubscribe { subscriber ->
+    override fun retrieve(): Single<T> {
+        return Single.fromCallable {
             synchronized(storeInFieldLock) {
                 if (content != null || contentDeleted) {
-                    subscriber.onNext(content!!)
-                    subscriber.onComplete()
-                    return@ObservableOnSubscribe
+                    content
                 }
             }
+
             var content: T? = null
-            val contentString = Util.readFullyUtf8(contentFile)
+            val contentString = readFullyUtf8(contentFile)
             var exception: Exception? = null
             if (!TextUtils.isEmpty(contentString)) {
                 try {
                     content = parser.fromJson(contentString!!, type)
                 } catch (e: Exception) {
-                    Util.deleteFile(contentFile)
+                    deleteFile(contentFile)
                     exception = e
                 }
             }
             if (content != null) {
-                synchronized(storeInFieldLock) { this@FlatFileStorage.content = content }
+                synchronized(storeInFieldLock) {
+                    this@FlatFileStorage.content = content
+                }
             }
-            content?.let { safeCompleteAfterPublish(subscriber, it) }
-                    ?: safeEndWithError(subscriber,
-                            StorageException("Failed to read file $contentFile", exception))
-        })
-        return retrieveDataObservable
+
+            content ?: throw StorageException("Failed to read file $contentFile", exception)
+        }
     }
 
     override fun delete(): Completable {
@@ -85,7 +73,7 @@ class FlatFileStorage<T>(
                 val deletedContent = content
                 content = null
                 contentDeleted = true
-                if (Util.deleteFile(contentFile)) {
+                if (deleteFile(contentFile)) {
                     safeCompleted(subscriber)
                 } else {
                     safeEndWithError(subscriber, StorageException("Maybe file is a directory $contentFile"))

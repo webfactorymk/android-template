@@ -1,7 +1,7 @@
 package mk.webfactory.template.data.storage
 
+import androidx.annotation.CheckResult
 import io.reactivex.Completable
-import io.reactivex.Observable
 import io.reactivex.Single
 
 /**
@@ -15,16 +15,19 @@ interface Storage<T> {
      * @throws StorageException
      * @see .isLocal
      */
+    @CheckResult
     fun save(t: T): Single<T>
 
     /** @throws StorageException
      */
+    @CheckResult
     fun retrieve(): Single<T>
 
     /**
      * @return completes or calls onError if an error occurs
      * @throws StorageException
      */
+    @CheckResult
     fun delete(): Completable
 
     /** Test whether the storage is local or remote.  */
