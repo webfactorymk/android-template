@@ -54,7 +54,7 @@ class UserScopeMonitor @Inject constructor(
         //We need it blocking for the first value if the user is logged in
         // so we can create the component immediately
         if (userManager.isLoggedIn()) {
-            createUserScopeComponent(userManager.getLoggedInUser().blockingFirst().user)
+            createUserScopeComponent(userManager.getLoggedInUserBlocking().user)
         }
         userUpdatesDisposable.safeDispose()
         userUpdatesDisposable = userManager.updates()
