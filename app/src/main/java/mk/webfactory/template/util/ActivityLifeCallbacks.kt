@@ -16,7 +16,7 @@ import android.os.Looper
  * @see .onApplicationEnteredForeground
  * @see .onApplicationEnteredBackground
  */
-class ActivityLifeCallbacks : ActivityLifeCallbacksAdapter {
+open class ActivityLifeCallbacks : ActivityLifeCallbacksAdapter {
     private val mHandler: Handler
     private var mStartedActivitiesCount = 0
     private val mNotifyActivityStartRunnable = Runnable { onApplicationEnteredForeground() }
@@ -31,8 +31,9 @@ class ActivityLifeCallbacks : ActivityLifeCallbacksAdapter {
         mHandler = handler
     }
 
-    protected fun onApplicationEnteredForeground() {}
-    protected fun onApplicationEnteredBackground() {}
+    protected open fun onApplicationEnteredForeground() {}
+    protected open fun onApplicationEnteredBackground() {}
+
     override fun onActivityStarted(activity: Activity) {
         if (++mStartedActivitiesCount == 1) {
             val delayForNotify = delayForNotify

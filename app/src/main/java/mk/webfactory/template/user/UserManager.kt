@@ -3,25 +3,29 @@ package mk.webfactory.template.user
 import io.reactivex.Observable
 import io.reactivex.subjects.BehaviorSubject
 import mk.webfactory.template.data.storage.Storage
-import mk.webfactory.template.di.qualifier.Internal
 import mk.webfactory.template.model.auth.AccessToken
-import javax.inject.Inject
-import javax.inject.Named
 
-class UserManager<U>(
+open class UserManager<U>(
     private val updateStream: BehaviorSubject<U>,
     userStorage: Storage<U>
 ) {
     private val userStore: UserStore<U> = UserStore(userStorage)
     private var authProvider: AuthProvider<U>? = null
 
-    fun getLoggedInUser(): Observable<U>? {
-        return userStore.get()
+    /**
+     * Receive updates on the current user, if any, and all subsequent users.
+     *
+     * @return [Observable] that emits the current user data, if any, and all subsequent user updates.
+     */
+    fun updates(): Observable<U> {
+        return updateStream.hide().distinctUntilChanged()
     }
 
-    fun isLoggedIn(): Boolean {
-        return userStore.get()?.blockingFirst() != null && authProvider != null
-    }
+    fun getLoggedInUserBlocking() = userStore.get().blockingFirst()
+
+    fun getLoggedInUser() = userStore.get()
+
+    fun isLoggedIn() = authProvider != null && userStore.get().blockingFirst() != null
 
     fun login(authProvider: AuthProvider<U>, credentials: AccessToken): Observable<U>? {
         this.authProvider = authProvider
@@ -38,10 +42,5 @@ class UserManager<U>(
         }
         authProvider?.logout(credentials)
         userStore.delete()
-    }
-
-    fun teardown() {
-        userStore.clearCache()
-        authProvider = null
     }
 }

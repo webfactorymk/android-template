@@ -6,14 +6,15 @@ import javax.inject.Named;
 import mk.webfactory.template.data.storage.InMemoryStorage;
 import mk.webfactory.template.di.qualifier.Local;
 import mk.webfactory.template.di.qualifier.Remote;
-import mk.webfactory.template.user.User;
+import mk.webfactory.template.network.api.UserService;
+import mk.webfactory.template.user.BaseUser;
 
 @Module
 public class HomeRepositoryModule {
 
   @Provides
   @Named("userId")
-  String provideUserId(User user) {
+  String provideUserId(BaseUser user) {
     return user.getId();
   }
 

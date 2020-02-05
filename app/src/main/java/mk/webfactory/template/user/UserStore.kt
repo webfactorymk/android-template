@@ -10,16 +10,12 @@ class UserStore<U>(private val inner: Storage<U>) {
     private var cachedUser: U? = null
     private var isUserFetched = false
 
-    fun clearCache() {
-        isUserFetched = false
-    }
-
     @CheckResult
-    fun get(): Observable<U>? {
+    fun get(): Observable<U> {
         return if (isUserFetched) {
             Observable.just(cachedUser)
         } else {
-            inner.retrieve()?.doOnNext { t ->
+            inner.retrieve().doOnNext { t ->
                 cachedUser = t
                 isUserFetched = true
             }
@@ -37,5 +33,9 @@ class UserStore<U>(private val inner: Storage<U>) {
     @CheckResult
     fun delete(): Completable {
         inner.delete()
+    }
+
+    fun clearCache() {
+        isUserFetched = false
     }
 }

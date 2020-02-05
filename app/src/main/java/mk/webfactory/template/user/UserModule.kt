@@ -20,29 +20,22 @@ import javax.inject.Singleton
 @Module
 class UserModule {
 
-    private val userUpdateStream = BehaviorSubject.create<UserDataWrapper>()
-
-    @Provides
-    @Named("user_updates")
-    fun provideUserUpdateStream(): Observable<UserDataWrapper> {
-        return userUpdateStream.hide()
-    }
+    private val userUpdateStream = BehaviorSubject.create<UserSession>()
 
     @Provides
     @Internal
-    @Named("user_updates")
-    fun provideUserUpdateStreamSource(): BehaviorSubject<UserDataWrapper> {
+    fun provideUserUpdateStreamSource(): BehaviorSubject<UserSession> {
         return userUpdateStream
     }
 
     @Provides
     @Singleton
-    fun provideFlatFileStorage(@ApplicationContext context: Context): Storage<UserDataWrapper> {
+    fun provideFlatFileStorage(@ApplicationContext context: Context): Storage<UserSession> {
         val userFile =
             File(context.filesDir, USER_DATA_FILE)
         val jsonConverter: JsonConverter = GsonConverter(Gson())
         return FlatFileStorage(
-            UserDataWrapper::class.java,
+            UserSession::class.java,
             userFile,
             jsonConverter
         )
@@ -51,9 +44,9 @@ class UserModule {
     @Provides
     @Singleton
     fun provideUserManager(
-        @Internal @Named("user_updates") userUpdates: BehaviorSubject<UserDataWrapper>,
-        userStorage: Storage<UserDataWrapper>
-    ): UserManager<UserDataWrapper> {
+        @Internal userUpdates: BehaviorSubject<UserSession>,
+        userStorage: Storage<UserSession>
+    ): UserManager<UserSession> {
         return UserManager(userUpdates, userStorage)
     }
 }

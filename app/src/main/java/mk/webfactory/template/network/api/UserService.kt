@@ -3,7 +3,7 @@ package mk.webfactory.template.network.api
 import io.reactivex.Completable
 import io.reactivex.Single
 import mk.webfactory.template.network.api.body.DeviceFcmTokenBody
-import mk.webfactory.template.user.User
+import mk.webfactory.template.user.BaseUser
 import okhttp3.ResponseBody
 import retrofit2.Response
 import retrofit2.http.Body
@@ -17,7 +17,7 @@ interface UserService {
     ): Single<Response<ResponseBody>>
 
     //@GET("login") todo
-    fun login(): Single<User>
+    fun login(): Single<BaseUser>
 
     //@GET("auth/logout") todo
     fun logout(): Completable?
