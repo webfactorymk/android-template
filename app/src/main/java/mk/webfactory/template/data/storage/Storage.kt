@@ -2,6 +2,7 @@ package mk.webfactory.template.data.storage
 
 import io.reactivex.Completable
 import io.reactivex.Observable
+import io.reactivex.Single
 
 /**
  * Generic single object store.
@@ -14,11 +15,11 @@ interface Storage<T> {
      * @throws StorageException
      * @see .isLocal
      */
-    fun save(t: T): Observable<T>
+    fun save(t: T): Single<T>
 
     /** @throws StorageException
      */
-    fun retrieve(): Observable<T>
+    fun retrieve(): Single<T>
 
     /**
      * @return completes or calls onError if an error occurs

@@ -1,6 +1,7 @@
 package mk.webfactory.template.user
 
 import io.reactivex.Observable
+import io.reactivex.Single
 import io.reactivex.subjects.BehaviorSubject
 import mk.webfactory.template.data.storage.Storage
 import mk.webfactory.template.model.auth.AccessToken
@@ -25,7 +26,7 @@ open class UserManager<U>(
      * Gets the logged in user.
      * @return [User]
      */
-    fun getLoggedInUserBlocking() = userStore.get().blockingFirst()
+    fun getLoggedInUserBlocking() = userStore.get().blockingGet()
 
     /**
      * Subscribes for updates on logged in user
@@ -42,7 +43,7 @@ open class UserManager<U>(
      * and must be the single source of truth for the user's logged in status.</i>
      */
 
-    fun isLoggedIn() = authProvider != null && userStore.get().blockingFirst() != null
+    fun isLoggedIn() = authProvider != null && userStore.get().blockingGet() != null
 
     /**
      *  Logs-in the user using the provided [AuthProvider]
@@ -50,13 +51,13 @@ open class UserManager<U>(
      *
      * If the user is already logged in, the user is returned with no additional action.
      */
-    fun login(authProvider: AuthProvider<U>): Observable<U> {
+    fun login(authProvider: AuthProvider<U>): Single<U> {
         this.authProvider = authProvider
         if (isLoggedIn()) {
             return userStore.get()
         }
-        return authProvider.login()
-            .flatMapObservable { t -> userStore.save(t) }
+        return authProvider.login().flatMap { t -> userStore.save(t) }
+            .doAfterSuccess(updateStream::onNext)
     }
 
     /**

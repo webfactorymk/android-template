@@ -3,7 +3,9 @@ package mk.webfactory.template.user
 import androidx.annotation.CheckResult
 import io.reactivex.Completable
 import io.reactivex.Observable
+import io.reactivex.Single
 import mk.webfactory.template.data.storage.Storage
+
 /**
  * Storage implementation that caches the value and returns
  * null instead of error if the value is not stored.
@@ -17,11 +19,11 @@ class UserStore<U>(private val inner: Storage<U>) {
      * Gets the user, caching the value.
      */
     @CheckResult
-    fun get(): Observable<U> {
+    fun get(): Single<U> {
         return if (isUserFetched) {
-            Observable.just(cachedUser)
+            Single.just(cachedUser)
         } else {
-            inner.retrieve().doOnNext { t ->
+            inner.retrieve().doOnSuccess { t ->
                 cachedUser = t
                 isUserFetched = true
             }
@@ -29,8 +31,8 @@ class UserStore<U>(private val inner: Storage<U>) {
     }
 
     @CheckResult
-    fun save(user: U): Observable<U> {
-        return inner.save(user).doOnNext { t ->
+    fun save(user: U): Single<U> {
+        return inner.save(user).doOnSuccess { t ->
             cachedUser = t
             isUserFetched = true
         }
