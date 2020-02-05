@@ -5,7 +5,7 @@ import dagger.Subcomponent
 import dagger.android.AndroidInjector
 import mk.webfactory.template.di.scope.UserScope
 import mk.webfactory.template.feature.home.HomeRepositoryModule
-import mk.webfactory.template.user.BaseUser
+import mk.webfactory.template.user.User
 
 @UserScope
 @Subcomponent(
@@ -23,7 +23,7 @@ interface UserScopeComponent {
     interface Builder {
 
         @BindsInstance
-        fun user(user: BaseUser): Builder
+        fun user(user: User): Builder
 
         fun build(): UserScopeComponent
     }

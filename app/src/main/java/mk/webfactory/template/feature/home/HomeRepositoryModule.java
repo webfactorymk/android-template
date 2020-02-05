@@ -7,14 +7,14 @@ import mk.webfactory.template.data.storage.InMemoryStorage;
 import mk.webfactory.template.di.qualifier.Local;
 import mk.webfactory.template.di.qualifier.Remote;
 import mk.webfactory.template.network.api.UserService;
-import mk.webfactory.template.user.BaseUser;
+import mk.webfactory.template.user.User;
 
 @Module
 public class HomeRepositoryModule {
 
   @Provides
   @Named("userId")
-  String provideUserId(BaseUser user) {
+  String provideUserId(User user) {
     return user.getId();
   }
 

@@ -23,13 +23,13 @@ open class UserManager<U>(
 
     /**
      * Gets the logged in user.
-     * @return [BaseUser]
+     * @return [User]
      */
     fun getLoggedInUserBlocking() = userStore.get().blockingFirst()
 
     /**
      * Subscribes for updates on logged in user
-     * @return [Observable] that emits [BaseUser]
+     * @return [Observable] that emits [User]
      */
 
     fun getLoggedInUser() = userStore.get()

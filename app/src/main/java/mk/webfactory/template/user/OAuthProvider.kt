@@ -10,8 +10,8 @@ class OAuthProvider(
     private val service: UserService,
     private val requestInterceptor: OAuthInterceptor,
     private val token: AccessToken
-) : AuthProvider<BaseUser> {
-    override fun login(): Single<BaseUser> {
+) : AuthProvider<User> {
+    override fun login(): Single<User> {
         return service.login()
     }
 
