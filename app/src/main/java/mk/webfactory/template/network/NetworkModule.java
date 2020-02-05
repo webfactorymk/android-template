@@ -9,7 +9,6 @@ import javax.inject.Named;
 import javax.inject.Singleton;
 import mk.webfactory.template.BuildConfig;
 import mk.webfactory.template.network.gson.ZonedDateTimeTypeAdapter;
-import mk.webfactory.template.user.UserDataWrapper;
 import mk.webfactory.template.user.UserSession;
 import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;

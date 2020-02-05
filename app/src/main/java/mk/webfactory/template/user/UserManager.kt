@@ -21,21 +21,48 @@ open class UserManager<U>(
         return updateStream.hide().distinctUntilChanged()
     }
 
+    /**
+     * Gets the logged in user.
+     * @return [BaseUser]
+     */
     fun getLoggedInUserBlocking() = userStore.get().blockingFirst()
+
+    /**
+     * Subscribes for updates on logged in user
+     * @return [Observable] that emits [BaseUser]
+     */
 
     fun getLoggedInUser() = userStore.get()
 
+    /**
+     *  Checks if the user is logged in.
+     *
+     * <i>Note: Extensions can expand behavior,
+     * but mind that this method is used in this component internally
+     * and must be the single source of truth for the user's logged in status.</i>
+     */
+
     fun isLoggedIn() = authProvider != null && userStore.get().blockingFirst() != null
 
-    fun login(authProvider: AuthProvider<U>, credentials: AccessToken): Observable<U>? {
+    /**
+     *  Logs-in the user using the provided [AuthProvider]
+     *   and triggers an update to the user [updateStream].
+     *
+     * If the user is already logged in, the user is returned with no additional action.
+     */
+    fun login(authProvider: AuthProvider<U>): Observable<U> {
         this.authProvider = authProvider
         if (isLoggedIn()) {
             return userStore.get()
         }
-        return authProvider.login(credentials)
-            .doAfterSuccess { t -> userStore.save(t) }.toObservable()
+        return authProvider.login()
+            .flatMapObservable { t -> userStore.save(t) }
     }
 
+    /**
+     * Logs-out the user
+     * If the user is already logged out, the method completes without doing anything.
+     */
     fun logout(credentials: AccessToken) {
         if (!(isLoggedIn())) {
             return

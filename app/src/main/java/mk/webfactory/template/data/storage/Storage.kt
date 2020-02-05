@@ -14,17 +14,17 @@ interface Storage<T> {
      * @throws StorageException
      * @see .isLocal
      */
-    fun save(t: T): Observable<T>?
+    fun save(t: T): Observable<T>
 
     /** @throws StorageException
      */
-    fun retrieve(): Observable<T>?
+    fun retrieve(): Observable<T>
 
     /**
      * @return completes or calls onError if an error occurs
      * @throws StorageException
      */
-    fun delete(): Completable?
+    fun delete(): Completable
 
     /** Test whether the storage is local or remote.  */
     val isLocal: Boolean

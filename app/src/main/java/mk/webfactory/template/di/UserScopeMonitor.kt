@@ -3,7 +3,7 @@ package mk.webfactory.template.di
 import io.reactivex.disposables.Disposable
 import mk.webfactory.template.App
 import mk.webfactory.template.data.rx.safeDispose
-import mk.webfactory.template.user.User
+import mk.webfactory.template.user.BaseUser
 import mk.webfactory.template.user.UserManager
 import mk.webfactory.template.user.UserSession
 import javax.inject.Inject
@@ -24,23 +24,18 @@ class UserScopeMonitor @Inject constructor(
         }
         userUpdatesDisposable.safeDispose()
         userUpdatesDisposable = userManager.updates()
-            .skip(if (userManager.isUserLoggedIn()) 1 else 0.toLong())
-            .subscribe(object : StubObserver<UserSession>() {
-                fun onNext(session: UserSession) {
-                    if (session.isActive()) {
-                        createUserScopeComponent(session)
-                    } else {
-                        userScopeComponent = null
-                    }
-                }
-            })
+            .skip(if (userManager.isLoggedIn()) 1 else 0.toLong())
+            .subscribe { session ->
+                if (session.isActive) createUserScopeComponent(session.user) else userScopeComponent =
+                    null
+            }
     }
 
     fun destroy() {
         userUpdatesDisposable.safeDispose()
     }
 
-    private fun createUserScopeComponent(user: User) {
+    private fun createUserScopeComponent(user: BaseUser) {
         userScopeComponent = app.appComponent.userScopeComponentBuilder()
             .user(user)
             .build()
