@@ -1,12 +1,16 @@
 package mk.webfactory.template
 
+import com.crashlytics.android.Crashlytics
 import com.jakewharton.threetenabp.AndroidThreeTen
 import dagger.android.AndroidInjector
 import dagger.android.DaggerApplication
+import io.fabric.sdk.android.Fabric
+import io.fabric.sdk.android.SilentLogger
 import mk.webfactory.template.di.AppComponent
 import mk.webfactory.template.di.DaggerAppComponent
 import mk.webfactory.template.di.UserScopeMonitor
 import mk.webfactory.template.log.CrashReportLogger
+import mk.webfactory.template.log.CrashlyticsLogger
 import mk.webfactory.template.log.DebugLogger
 import mk.webfactory.template.util.ActivityLifeCallbacks
 import timber.log.Timber
@@ -53,19 +57,16 @@ class App : DaggerApplication() {
         if (!BuildConfig.DEBUG) {
 
             //Fixme: use firebase crashlytics
-
-            throw UnsupportedOperationException("Not implemented yet")
-
-            // val crashlytics = Crashlytics()
-            // Fabric.with(
-            //     Builder(this)
-            //         .logger(SilentLogger())
-            //         .kits(crashlytics)
-            //         .build()
-            // )
-            // val logger = CrashlyticsLogger(this, crashlytics)
-            // Timber.plant(logger)
-            // return logger
+            val crashlytics = Crashlytics()
+            Fabric.with(
+                Fabric.Builder(this)
+                    .logger(SilentLogger())
+                    .kits(crashlytics)
+                    .build()
+            )
+            val logger = CrashlyticsLogger(this, crashlytics)
+            Timber.plant(logger)
+            return logger
         } else {
             val logger = DebugLogger()
             Timber.plant(logger)
