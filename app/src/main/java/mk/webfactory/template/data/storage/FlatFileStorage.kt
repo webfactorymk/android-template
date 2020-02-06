@@ -1,10 +1,7 @@
 package mk.webfactory.template.data.storage
 
 import android.text.TextUtils
-import io.reactivex.Completable
-import io.reactivex.Maybe
-import io.reactivex.Observable
-import io.reactivex.Single
+import io.reactivex.*
 import mk.webfactory.template.data.rx.Observables.safeCompleted
 import mk.webfactory.template.data.rx.Observables.safeEndWithError
 import java.io.File
@@ -25,13 +22,13 @@ class FlatFileStorage<T>(
     override val isLocal: Boolean = true
     override var storageId: String = FlatFileStorage::class.java.simpleName
 
-    override fun save(t: T): Single<T> {
+    override fun save(item: T): Single<T> {
         return Single.fromCallable {
-            val contentString = parser.toJson(t!!)
+            val contentString = parser.toJson(item!!)
             writeUtf8(contentString, contentFile)
 
             synchronized(storeInFieldLock) {
-                content = t
+                content = item
                 contentDeleted = false
             }
             content
@@ -82,6 +79,18 @@ class FlatFileStorage<T>(
                     )
                 }
             }
+        }
+    }
+
+    fun safeCompleted(subscriber: CompletableEmitter) {
+        if (!subscriber.isDisposed) {
+            subscriber.onComplete()
+        }
+    }
+
+    fun safeEndWithError(subscriber: CompletableEmitter, e: Throwable?) {
+        if (!subscriber.isDisposed) {
+            subscriber.onError(e!!)
         }
     }
 }

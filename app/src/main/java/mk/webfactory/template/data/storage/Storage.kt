@@ -11,29 +11,41 @@ import io.reactivex.Single
  * Note that the storage may cache values for any subsequent queries.
  */
 interface Storage<T> {
+
     /**
-     * @return the saved data.
-     * @throws StorageException
+     * Saves the given item.
+     *
+     * @return The saved item
+     * @throws StorageException If the item could not be saved
      * @see .isLocal
      */
     @CheckResult
-    fun save(t: T): Single<T>
+    fun save(item: T): Single<T>
 
-    /** @throws StorageException
+    /**
+     * Gets the saved item, if any.
+     *
+     * @return Maybe that emits the saved item, or completes if no item exits
+     * @throws StorageException
      */
     @CheckResult
     fun get(): Maybe<T>
 
     /**
-     * @return completes or calls onError if an error occurs
-     * @throws StorageException
+     * Deletes any saved item. It's safe to call this even if no item is saved.
+     *
+     * @throws StorageException In case the item could not be deleted
      */
     @CheckResult
     fun delete(): Completable
 
-    /** Test whether the storage is local or remote.  */
+    /**
+     * Test whether the storage is local or remote.
+     */
     val isLocal: Boolean
 
-    /** Returns the identifier that uniquely identifies this type of Storage.  */
+    /**
+     * Returns the identifier that uniquely identifies this type of Storage.
+     */
     val storageId: String
 }
