@@ -12,7 +12,7 @@ import javax.inject.Singleton;
 
 import mk.webfactory.template.BuildConfig;
 import mk.webfactory.template.network.gson.ZonedDateTimeTypeAdapter;
-import mk.webfactory.template.user.UserSession;
+import mk.webfactory.template.model.user.UserSession;
 import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;

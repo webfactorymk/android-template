@@ -1,4 +1,4 @@
-package mk.webfactory.template.user
+package mk.webfactory.template.model.user
 
 import com.google.gson.annotations.SerializedName
 

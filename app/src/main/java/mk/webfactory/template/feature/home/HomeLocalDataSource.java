@@ -2,7 +2,6 @@ package mk.webfactory.template.feature.home;
 
 import io.reactivex.Completable;
 import io.reactivex.Maybe;
-import mk.webfactory.template.data.rx.StubObserver;
 import mk.webfactory.template.data.storage.InMemoryStorage;
 
 /**
@@ -29,7 +28,7 @@ public class HomeLocalDataSource implements HomeDataSource {
   }
 
   @Override public void setSomething(Object object) {
-    storage.save(object).subscribe(new StubObserver<Object>() {});
+//    storage.save(object).subscribeBy();
     isCacheCorrupt = false;
   }
 
@@ -40,9 +39,5 @@ public class HomeLocalDataSource implements HomeDataSource {
 
   @Override public boolean isDataAvailable() {
     return !isCacheCorrupt;
-  }
-
-  @Override public String getUserId() {
-    return userId;
   }
 }

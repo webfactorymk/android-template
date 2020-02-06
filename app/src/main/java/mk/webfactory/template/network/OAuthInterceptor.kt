@@ -4,7 +4,7 @@ import io.reactivex.Observable
 import io.reactivex.disposables.Disposable
 import io.reactivex.internal.disposables.DisposableHelper.dispose
 import mk.webfactory.template.model.auth.AccessToken
-import mk.webfactory.template.user.UserSession
+import mk.webfactory.template.model.user.UserSession
 import okhttp3.Interceptor
 import okhttp3.Response
 import java.io.IOException

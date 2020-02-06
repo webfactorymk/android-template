@@ -1,17 +1,16 @@
 package mk.webfactory.template.feature.home;
 
+import androidx.annotation.NonNull;
+
 import io.reactivex.Completable;
 import io.reactivex.Maybe;
 import io.reactivex.functions.Consumer;
 import javax.inject.Inject;
-import javax.inject.Named;
 import mk.webfactory.template.di.qualifier.Local;
 import mk.webfactory.template.di.qualifier.Remote;
 import mk.webfactory.template.di.scope.UserScope;
 import timber.log.Timber;
 
-import static mk.webfactory.template.util.Preconditions.checkArgument;
-import static mk.webfactory.template.util.Preconditions.checkNotNull;
 
 /**
  * Concrete implementation to load data from multiple sources
@@ -22,15 +21,14 @@ import static mk.webfactory.template.util.Preconditions.checkNotNull;
 @UserScope
 public final class HomeRepository implements HomeDataSource {
 
-  private final String userId;
   private final HomeDataSource homeRemoteDataSource;
   private final HomeDataSource homeLocalDataSource;
 
   @Inject public HomeRepository(
-      @Remote HomeDataSource homeRemoteDataSource,
-      @Local HomeDataSource homeLocalDataSource) {
-    this.homeRemoteDataSource = checkNotNull(homeRemoteDataSource);
-    this.homeLocalDataSource = checkNotNull(homeLocalDataSource);
+      @NonNull @Remote HomeDataSource homeRemoteDataSource,
+      @NonNull @Local HomeDataSource homeLocalDataSource) {
+    this.homeRemoteDataSource = homeRemoteDataSource;
+    this.homeLocalDataSource = homeLocalDataSource;
   }
 
   @Override public Maybe<Object> getSomething() {
@@ -57,10 +55,6 @@ public final class HomeRepository implements HomeDataSource {
 
   @Override public boolean isDataAvailable() {
     return homeRemoteDataSource.isDataAvailable() || homeLocalDataSource.isDataAvailable();
-  }
-
-  @Override public String getUserId() {
-    return userId;
   }
 
   @Override public Completable deleteData() {

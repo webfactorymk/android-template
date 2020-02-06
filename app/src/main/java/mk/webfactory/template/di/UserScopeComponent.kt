@@ -5,7 +5,7 @@ import dagger.Subcomponent
 import dagger.android.AndroidInjector
 import mk.webfactory.template.di.scope.UserScope
 import mk.webfactory.template.feature.home.HomeRepositoryModule
-import mk.webfactory.template.user.User
+import mk.webfactory.template.model.user.User
 
 @UserScope
 @Subcomponent(

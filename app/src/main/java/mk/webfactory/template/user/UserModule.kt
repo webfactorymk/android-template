@@ -11,6 +11,7 @@ import mk.webfactory.template.data.storage.JsonConverter
 import mk.webfactory.template.data.storage.JsonConverter.GsonConverter
 import mk.webfactory.template.data.storage.Storage
 import mk.webfactory.template.di.qualifier.ApplicationContext
+import mk.webfactory.template.model.user.UserSession
 import java.io.File
 import java.lang.annotation.Documented
 import javax.inject.Qualifier

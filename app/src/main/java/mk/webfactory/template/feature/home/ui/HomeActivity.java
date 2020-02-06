@@ -1,7 +1,7 @@
 package mk.webfactory.template.feature.home.ui;
 
 import android.os.Bundle;
-import androidx.core.app.FragmentTransaction;
+import androidx.fragment.app.FragmentTransaction;
 import javax.inject.Inject;
 import mk.webfactory.template.R;
 import mk.webfactory.template.feature.common.ui.BaseActivity;

@@ -3,9 +3,9 @@ package mk.webfactory.template.di
 import io.reactivex.disposables.Disposable
 import mk.webfactory.template.App
 import mk.webfactory.template.data.rx.safeDispose
-import mk.webfactory.template.user.User
+import mk.webfactory.template.model.user.User
 import mk.webfactory.template.user.UserManager
-import mk.webfactory.template.user.UserSession
+import mk.webfactory.template.model.user.UserSession
 import javax.inject.Inject
 
 /**

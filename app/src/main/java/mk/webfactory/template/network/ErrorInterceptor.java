@@ -1,6 +1,7 @@
 package mk.webfactory.template.network;
 
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
+
 import java.io.IOException;
 import okhttp3.Interceptor;
 import okhttp3.Response;

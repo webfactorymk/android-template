@@ -2,6 +2,7 @@ package mk.webfactory.template.user
 
 import io.reactivex.Single
 import mk.webfactory.template.model.auth.AccessToken
+import mk.webfactory.template.model.user.User
 import mk.webfactory.template.network.OAuthInterceptor
 import mk.webfactory.template.network.api.UserService
 

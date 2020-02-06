@@ -6,10 +6,12 @@ import javax.inject.Inject;
 import mk.webfactory.template.R;
 import mk.webfactory.template.feature.common.ui.BaseActivity;
 import mk.webfactory.template.feature.home.ui.HomeActivity;
+import mk.webfactory.template.user.UserManager;
 
 public class LauncherActivity extends BaseActivity {
 
-  @Inject UserManager userManager;
+  @Inject
+  UserManager userManager;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -17,7 +19,7 @@ public class LauncherActivity extends BaseActivity {
     setContentView(R.layout.activity_container);
 
     startActivity(new Intent(LauncherActivity.this, HomeActivity.class));
-    if (userManager.isUserLoggedIn()) {
+    if (userManager.isLoggedIn()) {
       //startActivity(new Intent(LauncherActivity.this, HomeActivity.class));
       //finish();
     }

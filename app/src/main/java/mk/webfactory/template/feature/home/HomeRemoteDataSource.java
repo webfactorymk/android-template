@@ -1,21 +1,20 @@
 package mk.webfactory.template.feature.home;
 
+import androidx.annotation.NonNull;
+
 import io.reactivex.Completable;
 import io.reactivex.Maybe;
-
-import static mk.webfactory.template.util.Preconditions.checkNotNull;
+import mk.webfactory.template.network.api.UserService;
 
 /**
  * Concrete implementation of a data source that draws data from server.
  */
 public class HomeRemoteDataSource implements HomeDataSource {
 
-  private final String userId;
   private final UserService userService;
 
-  public HomeRemoteDataSource(String userId, UserService userService) {
-    this.userId = checkNotNull(userId);
-    this.userService = checkNotNull(userService);
+  public HomeRemoteDataSource(@NonNull String userId, @NonNull UserService userService) {
+    this.userService = userService;
   }
 
   @Override public Maybe<Object> getSomething() {
@@ -33,9 +32,5 @@ public class HomeRemoteDataSource implements HomeDataSource {
 
   @Override public boolean isDataAvailable() {
     return true;
-  }
-
-  @Override public String getUserId() {
-    return userId;
   }
 }
