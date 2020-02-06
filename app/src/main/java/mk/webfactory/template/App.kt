@@ -14,6 +14,7 @@ import mk.webfactory.template.log.CrashlyticsLogger
 import mk.webfactory.template.log.DebugLogger
 import mk.webfactory.template.util.ActivityLifeCallbacks
 import timber.log.Timber
+import java.lang.UnsupportedOperationException
 import javax.inject.Inject
 
 class App : DaggerApplication() {
@@ -58,16 +59,19 @@ class App : DaggerApplication() {
         if (!BuildConfig.DEBUG) {
 
             //Fixme: use firebase crashlytics
-            val crashlytics = Crashlytics()
-            Fabric.with(
-                Fabric.Builder(this)
-                    .logger(SilentLogger())
-                    .kits(crashlytics)
-                    .build()
-            )
-            val logger = CrashlyticsLogger(this, crashlytics)
-            Timber.plant(logger)
-            return logger
+//            val crashlytics = Crashlytics()
+//            Fabric.with(
+//                Fabric.Builder(this)
+//                    .logger(SilentLogger())
+//                    .kits(crashlytics)
+//                    .build()
+//            )
+//            val logger = CrashlyticsLogger(this, crashlytics)
+
+            throw UnsupportedOperationException("double init of crashlytics")
+
+//            Timber.plant(logger)
+//            return logger
         } else {
             val logger = DebugLogger()
             Timber.plant(logger)
