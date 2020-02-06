@@ -1,10 +1,14 @@
 package mk.webfactory.template.user
 
+import androidx.annotation.CheckResult
+import io.reactivex.Completable
+import io.reactivex.Maybe
 import io.reactivex.Observable
 import io.reactivex.Single
 import io.reactivex.subjects.BehaviorSubject
 import mk.webfactory.template.data.storage.Storage
 import mk.webfactory.template.model.auth.AccessToken
+import java.lang.UnsupportedOperationException
 
 open class UserManager<U>(
     private val updateStream: BehaviorSubject<U>,
@@ -14,26 +18,22 @@ open class UserManager<U>(
     private var authProvider: AuthProvider<U>? = null
 
     /**
-     * Receive updates on the current user, if any, and all subsequent users.
-     *
-     * @return [Observable] that emits the current user data, if any, and all subsequent user updates.
+     * Receive distinct updates on the current user, if any, and all subsequent users.
      */
+    @CheckResult
     fun updates(): Observable<U> {
-        return updateStream.hide().distinctUntilChanged()
+        return hideUpdatesStream(updateStream)
     }
 
     /**
-     * Gets the logged in user.
-     * @return [User]
+     * Gets the logged in user or null if no user is logged in.
      */
-    fun getLoggedInUserBlocking() = userStore.get().blockingGet()
+    fun getLoggedInUserBlocking(): U? = userStore.get().blockingGet()
 
     /**
-     * Subscribes for updates on logged in user
-     * @return [Observable] that emits [User]
+     * Gets the logged in user or completes if no user is logged in.
      */
-
-    fun getLoggedInUser() = userStore.get()
+    fun getLoggedInUser(): Maybe<U> = userStore.get()
 
     /**
      *  Checks if the user is logged in.
@@ -61,14 +61,23 @@ open class UserManager<U>(
     }
 
     /**
-     * Logs-out the user
+     * Logs-out the user.
      * If the user is already logged out, the method completes without doing anything.
      */
-    fun logout(credentials: AccessToken) {
+    fun logout(): Completable {
+
+        //FIXME like tail
+
         if (!(isLoggedIn())) {
-            return
+//            return
         }
-        authProvider?.logout(credentials)
-        userStore.delete()
+
+        return Completable.error(UnsupportedOperationException())
+    }
+
+    companion object {
+        fun <U> hideUpdatesStream(updateStream: BehaviorSubject<U>): Observable<U> {
+            return updateStream.hide().distinctUntilChanged()
+        }
     }
 }

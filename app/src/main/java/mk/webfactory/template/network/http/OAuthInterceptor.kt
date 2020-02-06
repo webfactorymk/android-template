@@ -1,41 +1,34 @@
-package mk.webfactory.template.network
+package mk.webfactory.template.network.http
 
 import io.reactivex.Observable
 import io.reactivex.disposables.Disposable
-import io.reactivex.internal.disposables.DisposableHelper.dispose
+import mk.webfactory.template.data.rx.safeDispose
 import mk.webfactory.template.model.auth.AccessToken
 import mk.webfactory.template.model.user.UserSession
 import okhttp3.Interceptor
 import okhttp3.Response
 import java.io.IOException
-import java.util.concurrent.atomic.AtomicReference
 
 /**
- *
  * [Interceptor] that adds OAuth2 authorization header on each request.
  *
  * Mind to update the token value when it changes.
  * Setting it to `null` disables this interceptor.
  */
+class OAuthInterceptor : Interceptor {
 
-class OAuthInterceptor() : Interceptor {
-    @get:Synchronized private var accessToken: AccessToken? = null
-    private lateinit var userUpdateStreamDisposable: Disposable
+    var accessToken: AccessToken? = null
+        @Synchronized get
+        @Synchronized set
 
-    fun setUserUpdateStream(userUpdateStream: Observable<UserSession?>) {
-        dispose(AtomicReference(userUpdateStreamDisposable))
-        userUpdateStreamDisposable = userUpdateStream
-            .map { userSession -> userSession.accessToken }
-            .subscribe { t ->
-                if (t != accessToken) {
-                    updateAccessToken(t)
-                }
+    private var userUpdateStreamDisposable: Disposable? = null
+
+    fun setUserUpdateStream(userUpdatesStream: Observable<UserSession>) {
+        userUpdateStreamDisposable.safeDispose()
+        userUpdateStreamDisposable = userUpdatesStream
+            .subscribe { session ->
+                accessToken = if (session.isActive) session.accessToken else null
             }
-    }
-
-    @Synchronized
-    private fun updateAccessToken(accessToken: AccessToken?) {
-        this.accessToken = accessToken
     }
 
     @Throws(IOException::class)

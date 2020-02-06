@@ -2,23 +2,28 @@ package mk.webfactory.template.network.api
 
 import io.reactivex.Completable
 import io.reactivex.Single
-import mk.webfactory.template.network.api.body.DeviceFcmTokenBody
 import mk.webfactory.template.model.user.User
+import mk.webfactory.template.model.fcm.DeviceFcmTokenBody
 import okhttp3.ResponseBody
 import retrofit2.Response
 import retrofit2.http.Body
+import retrofit2.http.POST
+import retrofit2.http.PUT
 import retrofit2.http.Path
 
 interface UserService {
-    //@PUT("user/{id}") todo
-    fun updateDeviceToken(
-        @Path("id") userId: String?,
-        @Body fcmTokenBody: DeviceFcmTokenBody?
+
+    //TODO: Provide real endpoint data
+
+    @PUT("user/{id}")
+    fun updateFcmDeviceToken(
+        @Path("id") userId: String,
+        @Body fcmTokenBody: DeviceFcmTokenBody
     ): Single<Response<ResponseBody>>
 
-    //@GET("login") todo
+    @POST("auth/login")
     fun login(): Single<User>
 
-    //@GET("auth/logout") todo
-    fun logout(): Completable?
+    @POST("auth/logout")
+    fun logout(): Completable
 }

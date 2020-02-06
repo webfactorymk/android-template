@@ -2,15 +2,23 @@ package mk.webfactory.template.user
 
 import androidx.annotation.CheckResult
 import io.reactivex.Completable
+import io.reactivex.Maybe
 import io.reactivex.Observable
 import io.reactivex.Single
 import mk.webfactory.template.data.storage.Storage
 
 /**
- * Storage implementation that caches the value and returns
- * null instead of error if the value is not stored.
+ * Storage implementation with cache.
  */
 class UserStore<U>(private val inner: Storage<U>) {
+
+
+
+    //FIXME refactor this with new storage interface and its usage in user manager
+    //FIXME make threadsafe, and document
+    //FIXME make generic and put in storage package
+
+
 
     private var cachedUser: U? = null
     private var isUserFetched = false
@@ -19,7 +27,7 @@ class UserStore<U>(private val inner: Storage<U>) {
      * Gets the user, caching the value.
      */
     @CheckResult
-    fun get(): Single<U> {
+    fun get(): Maybe<U> {
         return if (isUserFetched) {
             Single.just(cachedUser)
         } else {
