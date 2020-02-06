@@ -25,6 +25,39 @@ android {
         }
     }
 
+    flavorDimensions 'default'
+    productFlavors {
+        mock {
+            dimension 'default'
+            applicationIdSuffix '.mock'
+
+            manifestPlaceholders = [fabric_api_key: "123fabric123"]
+            def serverUrl = "https://example.com/"
+            buildConfigField "String", "API_BASE_URL", "\"${serverUrl}api/v1/\""
+            buildConfigField "String", "API_SECRET", hasProperty('API_SECRET') ? API_SECRET : ''
+        }
+
+        dev {
+            dimension 'default'
+            applicationIdSuffix '.dev'
+
+            //TODO configure with real data
+            manifestPlaceholders = [fabric_api_key: "123fabric123"]
+            def serverUrl = "https://example.com/"
+            buildConfigField "String", "API_BASE_URL", "\"${serverUrl}api/v1/\""
+            buildConfigField "String", "API_SECRET", hasProperty('API_SECRET') ? API_SECRET : ''
+        }
+        production {
+            dimension 'default'
+
+            //TODO configure with real data
+            manifestPlaceholders = [fabric_api_key: ""]
+            def serverUrl = ""
+            buildConfigField "String", "API_BASE_URL", "\"${serverUrl}api/v1/\""
+            buildConfigField "String", "API_SECRET", hasProperty('API_SECRET') ? API_SECRET : ''
+        }
+    }
+
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
