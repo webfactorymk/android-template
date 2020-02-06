@@ -7,14 +7,14 @@ import io.reactivex.Observable
 import io.reactivex.Single
 import io.reactivex.subjects.BehaviorSubject
 import mk.webfactory.template.data.storage.Storage
-import mk.webfactory.template.model.auth.AccessToken
-import java.lang.UnsupportedOperationException
+import mk.webfactory.template.data.storage.StorageCache
+import timber.log.Timber
 
 open class UserManager<U>(
     private val updateStream: BehaviorSubject<U>,
     userStorage: Storage<U>
 ) {
-    private val userStore: UserStore<U> = UserStore(userStorage)
+    private val userStore: StorageCache<U> = StorageCache(userStorage)
     private var authProvider: AuthProvider<U>? = null
 
     /**
@@ -33,6 +33,7 @@ open class UserManager<U>(
     /**
      * Gets the logged in user or completes if no user is logged in.
      */
+    @CheckResult
     fun getLoggedInUser(): Maybe<U> = userStore.get()
 
     /**
@@ -47,16 +48,17 @@ open class UserManager<U>(
 
     /**
      *  Logs-in the user using the provided [AuthProvider]
-     *   and triggers an update to the user [updateStream].
+     *  and triggers an update to the user [updateStream].
      *
      * If the user is already logged in, the user is returned with no additional action.
      */
     fun login(authProvider: AuthProvider<U>): Single<U> {
         this.authProvider = authProvider
         if (isLoggedIn()) {
-            return userStore.get()
+            return userStore.get().toSingle()
         }
-        return authProvider.login().flatMap { t -> userStore.save(t) }
+        return authProvider.login()
+            .flatMap { user -> userStore.save(user).doOnError { Timber.e(it) } }
             .doAfterSuccess(updateStream::onNext)
     }
 
@@ -65,14 +67,17 @@ open class UserManager<U>(
      * If the user is already logged out, the method completes without doing anything.
      */
     fun logout(): Completable {
-
-        //FIXME like tail
-
-        if (!(isLoggedIn())) {
-//            return
+        if (!isLoggedIn()) {
+            return Completable.complete()
         }
-
-        return Completable.error(UnsupportedOperationException())
+        return userStore.delete()
+            .andThen(authProvider!!.logout())
+            .doOnError { Timber.e(it) }
+            .doOnSuccess {
+                updateStream.onNext(it)
+            }
+            .ignoreElement()
+            .onErrorComplete()
     }
 
     companion object {
