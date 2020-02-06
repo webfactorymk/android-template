@@ -1,7 +1,9 @@
 # Android Template
 Android template project made with Kotlin, Jetpack, MVVM, Dagger, and RxJava
 
-# Setup fork updates against upstream
+# Fork
+
+## Setup fork updates against upstream
 This adds the forked repo in your version control and is useful when you want to stay up to date with the latest changes. In the end, you decide what gets merged or not.
 
 1. Add remote for the upstream repo
@@ -20,24 +22,22 @@ This adds the forked repo in your version control and is useful when you want to
     upstream	DISABLE (push)
     ```
 
+#### You can also disable commits on upstream with pre-commit hook
 
-> You can also disable commits on upstream with pre-commit hook
->
-> 1. go to your repository
-> 2. create file .git/hooks/pre-commit with following content:
->  
->    ```
->    #!/bin/sh
->     branch="$(git rev-parse --abbrev-ref HEAD)"
->     if [ "$branch" = "upstream" ]; then
->        echo "Upstream is read only!"
->        exit 1
->     fi
->    ```
->    
->3. make it executable
->`chmod +x .git/hooks/pre-commit`
->
+>> 1. go to your repository
+>> 2. create file .git/hooks/pre-commit with following content:
+>>  
+>>    ```
+>>    #!/bin/sh
+>>     branch="$(git rev-parse --abbrev-ref HEAD)"
+>>     if [ "$branch" = "upstream" ]; then
+>>        echo "Upstream is read only!"
+>>        exit 1
+>>     fi
+>>    ```
+>>    
+>> 3. make it executable
+>> `chmod +x .git/hooks/pre-commit`
 
 # License
 
