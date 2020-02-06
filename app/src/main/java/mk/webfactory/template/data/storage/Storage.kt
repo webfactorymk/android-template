@@ -2,6 +2,7 @@ package mk.webfactory.template.data.storage
 
 import androidx.annotation.CheckResult
 import io.reactivex.Completable
+import io.reactivex.Maybe
 import io.reactivex.Single
 
 /**
@@ -21,7 +22,7 @@ interface Storage<T> {
     /** @throws StorageException
      */
     @CheckResult
-    fun retrieve(): Single<T>
+    fun get(): Maybe<T>
 
     /**
      * @return completes or calls onError if an error occurs
