@@ -2,6 +2,7 @@ package mk.webfactory.template.data.storage
 
 import android.text.TextUtils
 import io.reactivex.Completable
+import io.reactivex.Maybe
 import io.reactivex.Observable
 import io.reactivex.Single
 import mk.webfactory.template.data.rx.Observables.safeCompleted
@@ -13,7 +14,8 @@ import java.lang.reflect.Type
 class FlatFileStorage<T>(
     private val type: Type,
     private val contentFile: File,
-    private val parser: JsonConverter) : Storage<T> {
+    private val parser: JsonConverter
+) : Storage<T> {
 
     private val storeInFieldLock = Any()
     private var content: T? = null
@@ -36,8 +38,8 @@ class FlatFileStorage<T>(
         }
     }
 
-    override fun retrieve(): Single<T> {
-        return Single.fromCallable {
+    override fun get(): Maybe<T> {
+        return Maybe.fromCallable<T> {
             synchronized(storeInFieldLock) {
                 if (content != null || contentDeleted) {
                     content
@@ -46,13 +48,11 @@ class FlatFileStorage<T>(
 
             var content: T? = null
             val contentString = readFullyUtf8(contentFile)
-            var exception: Exception? = null
             if (!TextUtils.isEmpty(contentString)) {
                 try {
                     content = parser.fromJson(contentString!!, type)
                 } catch (e: Exception) {
                     deleteFile(contentFile)
-                    exception = e
                 }
             }
             if (content != null) {
@@ -61,7 +61,7 @@ class FlatFileStorage<T>(
                 }
             }
 
-            content ?: throw StorageException("Failed to read file $contentFile", exception)
+            content?.let { it }
         }
     }
 
@@ -76,7 +76,10 @@ class FlatFileStorage<T>(
                 if (deleteFile(contentFile)) {
                     safeCompleted(subscriber)
                 } else {
-                    safeEndWithError(subscriber, StorageException("Maybe file is a directory $contentFile"))
+                    safeEndWithError(
+                        subscriber,
+                        StorageException("Maybe file is a directory $contentFile")
+                    )
                 }
             }
         }

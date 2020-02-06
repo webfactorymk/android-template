@@ -21,7 +21,7 @@ public class HomeLocalDataSource implements HomeDataSource {
 
   @Override public Maybe<Object> getSomething() {
     if (!isCacheCorrupt) {
-      return storage.retrieve().firstElement();
+      return storage.get();
     } else {
       return Maybe.empty();
     }

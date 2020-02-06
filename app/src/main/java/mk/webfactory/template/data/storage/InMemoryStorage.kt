@@ -1,6 +1,7 @@
 package mk.webfactory.template.data.storage
 
 import io.reactivex.Completable
+import io.reactivex.Maybe
 import io.reactivex.Single
 import mk.webfactory.template.data.rx.Observables.safeCompleted
 
@@ -21,13 +22,12 @@ class InMemoryStorage<T> : Storage<T> {
         }
     }
 
-    override fun retrieve(): Single<T> {
-        return Single.fromCallable {
-            if (content == null && !contentDeleted) {
-                throw StorageException()
-            } else {
+    override fun get(): Maybe<T> {
+        return Maybe.fromCallable<T> {
+            if (content != null || contentDeleted) {
                 content
             }
+            content?.let { it }
         }
     }
 
