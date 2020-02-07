@@ -1,9 +1,7 @@
 package mk.webfactory.template.log
 
-import android.annotation.TargetApi
 import android.content.Context
 import android.net.ConnectivityManager
-import android.os.Build
 import android.os.StatFs
 import android.os.SystemClock
 import com.crashlytics.android.core.CrashlyticsCore
@@ -59,13 +57,10 @@ internal class CrashlyticsExceptionHandler(
         crashlyticsCore.setString("freeDisk", toMbString(freeDiskMemory))
     }
 
-    @get:TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR2)
     private val freeDiskMemory: Long
         get() {
             val diskStats = StatFs(context.filesDir.path)
-            return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
-                diskStats.availableBytes
-            } else (diskStats.availableBlocks * diskStats.blockSize).toLong()
+            return diskStats.availableBytes
         }
 
     private fun toMbString(bytes: Long): String {

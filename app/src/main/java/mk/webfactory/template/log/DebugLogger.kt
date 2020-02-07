@@ -7,13 +7,12 @@ import timber.log.Timber.DebugTree
 import java.util.*
 
 class DebugLogger : DebugTree(), CrashReportLogger {
-    override fun setLoggedInUser(user: User?, accessToken: AccessToken?) {
-        if (user != null) {
-            logSetValue("user_id", user.id)
-        }
-        if (accessToken != null) {
-            logSetValue("access_token", accessToken.token)
-        }
+
+    private val lastUsedPages: List<String>
+        get() = ArrayList()
+
+    override fun setLoggedInUser(userIdentifier: String) {
+        logSetValue("user_id", userIdentifier)
     }
 
     override fun setCurrentPage(page: String) {
@@ -23,9 +22,6 @@ class DebugLogger : DebugTree(), CrashReportLogger {
     override fun lastUsedPages(): List<String> {
         return lastUsedPages
     }
-
-    private val lastUsedPages: List<String>
-        get() = ArrayList()
 
     private fun logSetValue(key: String, value: Any) {
         log(Log.INFO, TAG, "$key=$value", null)

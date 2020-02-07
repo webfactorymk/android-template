@@ -4,8 +4,8 @@ import io.reactivex.disposables.Disposable
 import mk.webfactory.template.App
 import mk.webfactory.template.data.rx.safeDispose
 import mk.webfactory.template.model.user.User
-import mk.webfactory.template.user.UserManager
 import mk.webfactory.template.model.user.UserSession
+import mk.webfactory.template.user.UserManager
 import javax.inject.Inject
 
 /**
@@ -42,15 +42,22 @@ class UserScopeMonitor @Inject constructor(
     private val app: App
 ) {
 
+    interface Listener {
+        fun onUserSessionChanged(userSession: UserSession)
+    }
+
     var userScopeComponent: UserScopeComponent? = null
         private set
     private var userUpdatesDisposable: Disposable? = null
+    private var listener: Listener? = null
 
 
     /**
      * Start monitoring user session state. Also checks the last known value.
      */
-    fun init() {
+    fun init(listener: Listener? = null) {
+        this.listener = listener
+
         //We need it blocking for the first value if the user is logged in
         // so we can create the component immediately
         if (userManager.isLoggedIn()) {
@@ -62,6 +69,7 @@ class UserScopeMonitor @Inject constructor(
             .distinctUntilChanged { lastState, newState ->
                 lastState.isActive == newState.isActive
             }
+            .doOnNext { listener?.onUserSessionChanged(it) }
             .subscribe { session ->
                 if (session.isActive) {
                     createUserScopeComponent(session.user)
@@ -77,6 +85,7 @@ class UserScopeMonitor @Inject constructor(
     fun destroy() {
         userUpdatesDisposable.safeDispose()
         userScopeComponent = null
+        listener = null
     }
 
     private fun createUserScopeComponent(user: User) {

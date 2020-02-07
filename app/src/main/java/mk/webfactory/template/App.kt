@@ -4,17 +4,15 @@ import com.crashlytics.android.Crashlytics
 import com.jakewharton.threetenabp.AndroidThreeTen
 import dagger.android.AndroidInjector
 import dagger.android.DaggerApplication
-import io.fabric.sdk.android.Fabric
-import io.fabric.sdk.android.SilentLogger
 import mk.webfactory.template.di.AppComponent
 import mk.webfactory.template.di.DaggerAppComponent
 import mk.webfactory.template.di.UserScopeMonitor
 import mk.webfactory.template.log.CrashReportLogger
 import mk.webfactory.template.log.CrashlyticsLogger
 import mk.webfactory.template.log.DebugLogger
+import mk.webfactory.template.model.user.UserSession
 import mk.webfactory.template.util.ActivityLifeCallbacks
 import timber.log.Timber
-import java.lang.UnsupportedOperationException
 import javax.inject.Inject
 
 class App : DaggerApplication() {
@@ -29,20 +27,27 @@ class App : DaggerApplication() {
     lateinit var userScopeMonitor: UserScopeMonitor
     lateinit var appComponent: AppComponent
 
-    private val activityLifeCallbacks: ActivityLifecycleCallbacks =
-        object : ActivityLifeCallbacks() {
-            override fun onApplicationEnteredForeground() {
-                //TODO: Actions when application enters foreground
-            }
+    private val activityLifeCallbacks = object : ActivityLifeCallbacks() {
 
-            override fun onApplicationEnteredBackground() {}
+        override fun onApplicationEnteredForeground() {
+            //TODO: Actions when application enters foreground
         }
+
+        override fun onApplicationEnteredBackground() {}
+    }
+
+    private val userSessionChangeListener = object : UserScopeMonitor.Listener {
+
+        override fun onUserSessionChanged(userSession: UserSession) {
+            CRASH_REPORT.setLoggedInUser(userSession.user.id + " (active=${userSession.isActive})")
+        }
+    }
 
     override fun onCreate() {
         super.onCreate()
         AndroidThreeTen.init(this)
         crashReportLogger = initializeLoggingEnvironment()
-        userScopeMonitor.init()
+        userScopeMonitor.init(userSessionChangeListener)
         registerActivityLifecycleCallbacks(activityLifeCallbacks)
     }
 
@@ -56,26 +61,14 @@ class App : DaggerApplication() {
     }
 
     private fun initializeLoggingEnvironment(): CrashReportLogger {
-        if (!BuildConfig.DEBUG) {
+        val logger: CrashReportLogger =
+            if (BuildConfig.DEBUG) {
+                DebugLogger()
+            } else {
+                CrashlyticsLogger(this, Crashlytics.getInstance())
+            }
 
-            //Fixme: use firebase crashlytics
-//            val crashlytics = Crashlytics()
-//            Fabric.with(
-//                Fabric.Builder(this)
-//                    .logger(SilentLogger())
-//                    .kits(crashlytics)
-//                    .build()
-//            )
-//            val logger = CrashlyticsLogger(this, crashlytics)
-
-            throw UnsupportedOperationException("double init of crashlytics")
-
-//            Timber.plant(logger)
-//            return logger
-        } else {
-            val logger = DebugLogger()
-            Timber.plant(logger)
-            return logger
-        }
+        Timber.plant(logger as Timber.Tree)
+        return logger
     }
 }
