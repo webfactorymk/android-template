@@ -21,7 +21,7 @@ abstract class BaseActivity : AppCompatActivity(), HasAndroidInjector {
 
     override fun onResume() {
         super.onResume()
-        CRASH_REPORT.setCurrentPage(javaClass.canonicalName)
+        CRASH_REPORT.setCurrentPage(javaClass.canonicalName!!)
     }
 
     override fun androidInjector(): AndroidInjector<Any> {
