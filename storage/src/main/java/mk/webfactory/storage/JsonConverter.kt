@@ -1,4 +1,4 @@
-package mk.webfactory.template.data.storage
+package mk.webfactory.storage
 
 import com.google.gson.Gson
 import java.lang.reflect.Type

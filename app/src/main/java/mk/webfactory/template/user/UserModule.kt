@@ -6,10 +6,10 @@ import dagger.Module
 import dagger.Provides
 import io.reactivex.Observable
 import io.reactivex.subjects.BehaviorSubject
+import mk.webfactory.storage.FlatFileStorage
+import mk.webfactory.storage.JsonConverter
+import mk.webfactory.storage.Storage
 import mk.webfactory.template.config.USER_DATA_FILE
-import mk.webfactory.template.data.storage.FlatFileStorage
-import mk.webfactory.template.data.storage.JsonConverter.GsonConverter
-import mk.webfactory.template.data.storage.Storage
 import mk.webfactory.template.di.qualifier.ApplicationContext
 import mk.webfactory.template.model.user.UserSession
 import java.io.File
@@ -43,7 +43,7 @@ class UserModule {
         return FlatFileStorage(
             UserSession::class.java,
             File(context.filesDir, USER_DATA_FILE),
-            GsonConverter(gson)
+            JsonConverter.GsonConverter(gson)
         )
     }
 

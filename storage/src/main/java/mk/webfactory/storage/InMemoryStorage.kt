@@ -1,4 +1,4 @@
-package mk.webfactory.template.data.storage
+package mk.webfactory.storage
 
 import io.reactivex.Completable
 import io.reactivex.Maybe
@@ -11,7 +11,7 @@ class InMemoryStorage<T> : Storage<T> {
         @Synchronized set
 
     override val isLocal: Boolean = true
-    override var storageId: String = FlatFileStorage::class.java.simpleName
+    override var storageId: String = InMemoryStorage::class.java.simpleName
 
     override fun save(item: T) = Single.fromCallable<T> {
         content = item

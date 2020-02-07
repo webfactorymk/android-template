@@ -1,4 +1,4 @@
-package mk.webfactory.template.data.storage
+package mk.webfactory.storage
 
 import io.reactivex.Single
 import io.reactivex.functions.Function

@@ -1,9 +1,9 @@
-package mk.webfactory.template.data.storage
+package mk.webfactory.storage
 
-import androidx.annotation.CheckResult
 import io.reactivex.Completable
 import io.reactivex.Maybe
 import io.reactivex.Single
+import io.reactivex.annotations.CheckReturnValue
 
 /**
  * Storage implementation with cache.
@@ -17,7 +17,7 @@ class StorageCache<T>(private val inner: Storage<T>) : Storage<T> by inner {
     @Volatile
     private var isItemFetched = false
 
-    @CheckResult
+    @CheckReturnValue
     override fun save(item: T): Single<T> {
         return inner.save(item).doOnSuccess {
             cachedItem = it
@@ -25,7 +25,7 @@ class StorageCache<T>(private val inner: Storage<T>) : Storage<T> by inner {
         }
     }
 
-    @CheckResult
+    @CheckReturnValue
     override fun get(): Maybe<T> {
         return if (isItemFetched) {
             Maybe.fromCallable { cachedItem }
@@ -42,7 +42,7 @@ class StorageCache<T>(private val inner: Storage<T>) : Storage<T> by inner {
         }
     }
 
-    @CheckResult
+    @CheckReturnValue
     override fun delete(): Completable {
         return inner.delete()
             .doOnComplete {

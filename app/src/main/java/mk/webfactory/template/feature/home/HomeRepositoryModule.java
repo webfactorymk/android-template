@@ -1,13 +1,14 @@
 package mk.webfactory.template.feature.home;
 
+import javax.inject.Named;
+
 import dagger.Module;
 import dagger.Provides;
-import javax.inject.Named;
-import mk.webfactory.template.data.storage.InMemoryStorage;
+import mk.webfactory.storage.InMemoryStorage;
 import mk.webfactory.template.di.qualifier.Local;
 import mk.webfactory.template.di.qualifier.Remote;
-import mk.webfactory.template.network.api.UserService;
 import mk.webfactory.template.model.user.User;
+import mk.webfactory.template.network.api.UserService;
 
 @Module
 public class HomeRepositoryModule {

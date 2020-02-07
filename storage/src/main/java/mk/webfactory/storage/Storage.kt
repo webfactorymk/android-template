@@ -1,9 +1,9 @@
-package mk.webfactory.template.data.storage
+package mk.webfactory.storage
 
-import androidx.annotation.CheckResult
 import io.reactivex.Completable
 import io.reactivex.Maybe
 import io.reactivex.Single
+import io.reactivex.annotations.CheckReturnValue
 
 /**
  * Generic single object store.
@@ -19,7 +19,7 @@ interface Storage<T> {
      * @throws StorageException If the item could not be saved
      * @see .isLocal
      */
-    @CheckResult
+    @CheckReturnValue
     fun save(item: T): Single<T>
 
     /**
@@ -28,7 +28,7 @@ interface Storage<T> {
      * @return Maybe that emits the saved item, or completes if no item exits
      * @throws StorageException
      */
-    @CheckResult
+    @CheckReturnValue
     fun get(): Maybe<T>
 
     /**
@@ -36,7 +36,7 @@ interface Storage<T> {
      *
      * @throws StorageException In case the item could not be deleted
      */
-    @CheckResult
+    @CheckReturnValue
     fun delete(): Completable
 
     /**

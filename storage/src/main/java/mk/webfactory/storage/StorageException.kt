@@ -1,4 +1,4 @@
-package mk.webfactory.template.data.storage
+package mk.webfactory.storage
 
 class StorageException : RuntimeException {
     constructor()

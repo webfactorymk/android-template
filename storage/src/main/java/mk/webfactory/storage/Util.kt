@@ -1,16 +1,19 @@
-package mk.webfactory.template.data.storage
+package mk.webfactory.storage
 
-import androidx.annotation.NonNull
-import timber.log.Timber
+import io.reactivex.annotations.NonNull
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import java.io.*
 import java.nio.channels.FileLock
 
+
+private val logger: Logger = LoggerFactory.getLogger("Util")
 
 private const val DEF_BYTE_BUFFER_SIZE = 96000
 
 fun readFullyUtf8(file: File): String? {
     if (!file.exists()) {
-        Timber.d("File not found " + file.path)
+        logger.debug("File not found " + file.path)
         return null
     }
     var fis: FileInputStream? = null
@@ -50,7 +53,7 @@ fun write(bytes: ByteArray?, outFile: File): Boolean {
  */
 fun write(content: InputStream, outFile: File): Boolean {
     if (outFile.parentFile.mkdirs() && !outFile.parentFile.exists()) {
-        Timber.d("Cannot create file ${outFile.path}")
+        logger.debug("Cannot create file ${outFile.path}")
         return false
     }
     var outStream: BufferedOutputStream? = null

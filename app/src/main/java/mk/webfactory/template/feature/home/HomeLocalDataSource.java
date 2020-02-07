@@ -2,7 +2,7 @@ package mk.webfactory.template.feature.home;
 
 import io.reactivex.Completable;
 import io.reactivex.Maybe;
-import mk.webfactory.template.data.storage.InMemoryStorage;
+import mk.webfactory.storage.InMemoryStorage;
 
 /**
  * Concrete implementation of a data source as in memory cache.

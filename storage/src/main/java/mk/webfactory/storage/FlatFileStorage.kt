@@ -1,9 +1,8 @@
-package mk.webfactory.template.data.storage
+package mk.webfactory.storage
 
-import android.text.TextUtils
-import io.reactivex.*
-import mk.webfactory.template.data.rx.Observables.safeCompleted
-import mk.webfactory.template.data.rx.Observables.safeEndWithError
+import io.reactivex.Completable
+import io.reactivex.Maybe
+import io.reactivex.Single
 import java.io.File
 import java.lang.reflect.Type
 
@@ -17,7 +16,6 @@ class FlatFileStorage<T>(
     private val storeInFieldLock = Any()
     private var content: T? = null
     private var contentDeleted = false
-    private lateinit var retrieveDataObservable: Observable<T>
 
     override val isLocal: Boolean = true
     override var storageId: String = FlatFileStorage::class.java.simpleName
@@ -45,9 +43,9 @@ class FlatFileStorage<T>(
 
             var content: T? = null
             val contentString = readFullyUtf8(contentFile)
-            if (!TextUtils.isEmpty(contentString)) {
+            if (contentString != null && contentString.isNotEmpty()) {
                 try {
-                    content = parser.fromJson(contentString!!, type)
+                    content = parser.fromJson(contentString, type)
                 } catch (e: Exception) {
                     deleteFile(contentFile)
                 }
@@ -58,39 +56,18 @@ class FlatFileStorage<T>(
                 }
             }
 
-            content?.let { it }
+            content
         }
     }
 
     override fun delete(): Completable {
-        return Completable.create { subscriber ->
+        return Completable.fromRunnable {
             synchronized(storeInFieldLock) {
-                // the file content should be read
-                // but nobody cares about the deleted content
-                val deletedContent = content
                 content = null
                 contentDeleted = true
-                if (deleteFile(contentFile)) {
-                    safeCompleted(subscriber)
-                } else {
-                    safeEndWithError(
-                        subscriber,
-                        StorageException("Maybe file is a directory $contentFile")
-                    )
-                }
+                if (!deleteFile(contentFile)) {
+                    throw StorageException("Maybe file is a directory $contentFile"); }
             }
-        }
-    }
-
-    fun safeCompleted(subscriber: CompletableEmitter) {
-        if (!subscriber.isDisposed) {
-            subscriber.onComplete()
-        }
-    }
-
-    fun safeEndWithError(subscriber: CompletableEmitter, e: Throwable?) {
-        if (!subscriber.isDisposed) {
-            subscriber.onError(e!!)
         }
     }
 }
