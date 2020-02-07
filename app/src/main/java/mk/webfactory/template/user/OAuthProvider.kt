@@ -22,7 +22,7 @@ class OAuthProvider(
 ) : AuthProvider<UserSession> {
 
     override fun login(): Single<UserSession> {
-        return userService.login().map { user -> UserSession(user, token,null) }
+        return userService.login().map { user -> UserSession(user, token) }
     }
 
     override fun logout() = userService.logout()

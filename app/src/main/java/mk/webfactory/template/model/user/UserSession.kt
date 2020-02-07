@@ -5,7 +5,7 @@ import mk.webfactory.template.model.auth.AccessToken
 class UserSession(
     val user: User,
     val accessToken: AccessToken?,
-    val error: Throwable?
+    val error: Throwable? = null
 ) {
 
     /**
