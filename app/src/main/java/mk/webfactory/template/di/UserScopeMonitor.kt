@@ -6,7 +6,6 @@ import mk.webfactory.template.data.rx.safeDispose
 import mk.webfactory.template.model.user.User
 import mk.webfactory.template.model.user.UserSession
 import mk.webfactory.template.user.UserManager
-import javax.inject.Inject
 
 /**
  * Monitors the [UserSession] state and creates and tears down the [UserScopeComponent].
@@ -37,9 +36,9 @@ import javax.inject.Inject
  * }
  * ```
  */
-class UserScopeMonitor @Inject constructor(
+class UserScopeMonitor(
     private val userManager: UserManager<UserSession>,
-    private val app: App
+    private val appComponent: AppComponent
 ) {
 
     interface Listener {
@@ -89,7 +88,7 @@ class UserScopeMonitor @Inject constructor(
     }
 
     private fun createUserScopeComponent(user: User) {
-        userScopeComponent = app.appComponent.userScopeComponentBuilder()
+        userScopeComponent = appComponent.userScopeComponentBuilder()
             .user(user)
             .build()
     }

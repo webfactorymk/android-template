@@ -14,7 +14,7 @@ class HomeFragment
 
     //  private Unbinder unbinder;
     var circularProgressView: View? = null
-    @Inject
+    @set:Inject
     var presenter: HomeContract.Presenter? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {

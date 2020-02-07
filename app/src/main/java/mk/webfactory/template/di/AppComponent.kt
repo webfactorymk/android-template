@@ -7,8 +7,10 @@ import dagger.android.AndroidInjector
 import dagger.android.support.AndroidSupportInjectionModule
 import mk.webfactory.template.App
 import mk.webfactory.template.data.DataModule
+import mk.webfactory.template.model.user.UserSession
 import mk.webfactory.template.network.NetworkModule
-import mk.webfactory.template.network.api.ServiceModule
+import mk.webfactory.template.network.api.ApiServiceModule
+import mk.webfactory.template.user.UserManager
 import mk.webfactory.template.user.UserModule
 import javax.inject.Singleton
 
@@ -18,7 +20,7 @@ import javax.inject.Singleton
         AppModule::class,
         NetworkModule::class,
         DataModule::class,
-        ServiceModule::class,
+        ApiServiceModule::class,
         UserModule::class,
         GlobalBindingModule::class,
         AndroidSupportInjectionModule::class
@@ -28,6 +30,8 @@ import javax.inject.Singleton
 interface AppComponent : AndroidInjector<App> {
 
     fun userScopeComponentBuilder(): UserScopeComponent.Builder
+
+    val userManager: UserManager<UserSession>
 
     override fun inject(app: App)
 

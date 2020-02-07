@@ -73,7 +73,7 @@ class NetworkModule {
     @Singleton
     @Named("OAuth")
     fun provideOAuthInterceptor(
-        @Named("user_update") userUpdateStream: Observable<UserSession>
+        @Named("user_updates") userUpdateStream: Observable<UserSession>
     ): Interceptor {
         return OAuthInterceptor().apply { setUserUpdateStream(userUpdateStream) }
     }
@@ -81,7 +81,7 @@ class NetworkModule {
     @Provides
     @Named("Error")
     fun provideErrorInterceptor(
-        unauthorizedUserHandler: UnauthorizedUserHandler,
+        unauthorizedUserHandler: UnauthorizedUserHandlerImpl,
         gson: Gson
     ): Interceptor {
         return ErrorInterceptor(unauthorizedUserHandler, gson)

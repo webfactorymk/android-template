@@ -13,7 +13,6 @@ import mk.webfactory.template.log.DebugLogger
 import mk.webfactory.template.model.user.UserSession
 import mk.webfactory.template.util.ActivityLifeCallbacks
 import timber.log.Timber
-import javax.inject.Inject
 
 class App : DaggerApplication() {
 
@@ -23,7 +22,6 @@ class App : DaggerApplication() {
         private lateinit var crashReportLogger: CrashReportLogger
     }
 
-    @Inject
     lateinit var userScopeMonitor: UserScopeMonitor
     lateinit var appComponent: AppComponent
 
@@ -47,7 +45,8 @@ class App : DaggerApplication() {
         super.onCreate()
         AndroidThreeTen.init(this)
         crashReportLogger = initializeLoggingEnvironment()
-        userScopeMonitor.init(userSessionChangeListener)
+        userScopeMonitor = UserScopeMonitor(appComponent.userManager, appComponent)
+            .apply { init(userSessionChangeListener) }
         registerActivityLifecycleCallbacks(activityLifeCallbacks)
     }
 

@@ -7,7 +7,8 @@ import javax.inject.Inject
 
 
 class HomeActivity : BaseActivity() {
-    @Inject
+
+    @set:Inject
     var injectedFragment: HomeFragment? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {

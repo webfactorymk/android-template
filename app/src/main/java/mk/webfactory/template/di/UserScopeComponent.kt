@@ -2,7 +2,7 @@ package mk.webfactory.template.di
 
 import dagger.BindsInstance
 import dagger.Subcomponent
-import dagger.android.AndroidInjector
+import dagger.android.DispatchingAndroidInjector
 import mk.webfactory.template.di.scope.UserScope
 import mk.webfactory.template.feature.home.HomeRepositoryModule
 import mk.webfactory.template.model.user.User
@@ -17,7 +17,7 @@ import mk.webfactory.template.model.user.User
 )
 interface UserScopeComponent {
 
-    val androidInjector: AndroidInjector<Any>
+    val androidInjector: DispatchingAndroidInjector<Any>
 
     @Subcomponent.Builder
     interface Builder {

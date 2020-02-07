@@ -1,6 +1,7 @@
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
+apply plugin: 'kotlin-kapt'
 apply plugin: 'io.fabric'
 apply plugin: 'com.google.gms.google-services'
 
@@ -16,6 +17,7 @@ android {
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        multiDexEnabled true
     }
 
     buildTypes {
@@ -34,7 +36,6 @@ android {
             manifestPlaceholders = [fabric_api_key: "123fabric123"]
             def serverUrl = "https://example.com/"
             buildConfigField "String", "API_BASE_URL", "\"${serverUrl}api/v1/\""
-            buildConfigField "String", "API_SECRET", hasProperty('API_SECRET') ? API_SECRET : ''
         }
 
         dev {
@@ -45,7 +46,6 @@ android {
             manifestPlaceholders = [fabric_api_key: "123fabric123"]
             def serverUrl = "https://example.com/"
             buildConfigField "String", "API_BASE_URL", "\"${serverUrl}api/v1/\""
-            buildConfigField "String", "API_SECRET", hasProperty('API_SECRET') ? API_SECRET : ''
         }
         production {
             dimension 'default'
@@ -54,7 +54,6 @@ android {
             manifestPlaceholders = [fabric_api_key: ""]
             def serverUrl = ""
             buildConfigField "String", "API_BASE_URL", "\"${serverUrl}api/v1/\""
-            buildConfigField "String", "API_SECRET", hasProperty('API_SECRET') ? API_SECRET : ''
         }
     }
 
@@ -89,10 +88,10 @@ dependencies {
     implementation 'io.reactivex.rxjava2:rxandroid:2.1.1'
 
     implementation 'com.google.dagger:dagger:2.26'
-    annotationProcessor 'com.google.dagger:dagger-compiler:2.26'
     implementation 'com.google.dagger:dagger-android:2.26'
-    annotationProcessor 'com.google.dagger:dagger-android-processor:2.26'
     implementation 'com.google.dagger:dagger-android-support:2.26'
+    kapt 'com.google.dagger:dagger-compiler:2.26'
+    kapt 'com.google.dagger:dagger-android-processor:2.26'
 
     implementation 'com.squareup.retrofit2:retrofit:2.6.0'
     implementation 'com.squareup.retrofit2:converter-gson:2.5.0'

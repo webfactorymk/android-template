@@ -6,7 +6,7 @@ import retrofit2.Retrofit
 import javax.inject.Singleton
 
 @Module
-class ServiceModule {
+class ApiServiceModule {
     @Provides
     @Singleton
     fun provideUserService(retrofit: Retrofit): UserService {
