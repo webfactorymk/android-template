@@ -6,8 +6,8 @@ import io.reactivex.Maybe
 import io.reactivex.Observable
 import io.reactivex.Single
 import io.reactivex.subjects.BehaviorSubject
-import mk.webfactory.template.data.storage.Storage
-import mk.webfactory.template.data.storage.StorageCache
+import mk.webfactory.storage.Storage
+import mk.webfactory.storage.StorageCache
 import timber.log.Timber
 
 open class UserManager<U>(
@@ -73,10 +73,6 @@ open class UserManager<U>(
         return userStore.delete()
             .andThen(authProvider!!.logout())
             .doOnError { Timber.e(it) }
-            .doOnSuccess {
-                updateStream.onNext(it)
-            }
-            .ignoreElement()
             .onErrorComplete()
     }
 
