@@ -1,18 +1,26 @@
 package mk.webfactory.template.user
 
 import androidx.annotation.CheckResult
+import dagger.Lazy
 import io.reactivex.Completable
+import io.reactivex.Completable.mergeDelayError
 import io.reactivex.Maybe
 import io.reactivex.Observable
 import io.reactivex.Single
 import io.reactivex.subjects.BehaviorSubject
 import mk.webfactory.storage.Storage
 import mk.webfactory.storage.StorageCache
+import mk.webfactory.template.di.qualifier.Internal
 import timber.log.Timber
+import javax.inject.Inject
+import javax.inject.Singleton
 
-open class UserManager<U>(
+@Singleton
+class UserManager<U> @Inject constructor(
+    userStorage: Storage<U>,
+    @Internal
     private val updateStream: BehaviorSubject<U>,
-    userStorage: Storage<U>
+    private val logoutHooks: Lazy<Set<@JvmSuppressWildcards LogoutHook>>
 ) {
     private val userStore: StorageCache<U> = StorageCache(userStorage)
     private var authProvider: AuthProvider<U>? = null
@@ -72,11 +80,12 @@ open class UserManager<U>(
         }
         return userStore.delete()
             .andThen(authProvider!!.logout())
+            .andThen(mergeDelayError(logoutHooks.get().map { it.postLogout() }))
             .doOnError { Timber.e(it) }
             .onErrorComplete()
     }
 
-    companion object {
+    internal companion object {
         fun <U> hideUpdatesStream(updateStream: BehaviorSubject<U>): Observable<U> {
             return updateStream.hide().distinctUntilChanged()
         }
