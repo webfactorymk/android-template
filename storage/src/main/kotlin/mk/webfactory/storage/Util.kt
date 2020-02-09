@@ -27,7 +27,7 @@ fun readFullyUtf8(file: File): String? {
             content.append(line)
             content.append('\n')
         }
-        content.toString()
+        content.removeSuffix("\n").toString()
     } catch (ignored: IOException) {
         null
     } finally {
