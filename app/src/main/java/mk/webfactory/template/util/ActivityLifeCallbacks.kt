@@ -70,7 +70,7 @@ open class ActivityLifeCallbacks : ActivityLifeCallbacksAdapter {
 
 abstract class ActivityLifeCallbacksAdapter : Application.ActivityLifecycleCallbacks {
 
-    override fun onActivityCreated(activity: Activity, savedInstanceState: Bundle) {}
+    override fun onActivityCreated(activity: Activity, savedInstanceState: Bundle?) {}
 
     override fun onActivityStarted(activity: Activity) {}
 
