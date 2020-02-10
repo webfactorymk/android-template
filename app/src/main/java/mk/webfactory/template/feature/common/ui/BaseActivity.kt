@@ -16,7 +16,7 @@ abstract class BaseActivity : AppCompatActivity(), HasAndroidInjector {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         AndroidInjection.inject(this)
-        super.onCreate(savedInstanceState?: Bundle())
+        super.onCreate(savedInstanceState)
     }
 
     override fun onResume() {
