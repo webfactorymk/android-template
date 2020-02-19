@@ -20,6 +20,7 @@ class UserManager<U> @Inject constructor(
     userStorage: Storage<U>,
     @Internal
     private val updateStream: BehaviorSubject<U>,
+    private val loginHooks: Lazy<Set<@JvmSuppressWildcards LoginHook<U>>>,
     private val logoutHooks: Lazy<Set<@JvmSuppressWildcards LogoutHook>>
 ) {
     private val userStore: StorageCache<U> = StorageCache(userStorage)
@@ -67,6 +68,12 @@ class UserManager<U> @Inject constructor(
         }
         return authProvider.login()
             .flatMap { user -> userStore.save(user).doOnError { Timber.e(it) } }
+            .flatMap { user ->
+                mergeDelayError(loginHooks.get().map { it.postLogin(user) })
+                    .doOnError { Timber.e(it) }
+                    .onErrorComplete()
+                    .andThen(Single.just(user))
+            }
             .doAfterSuccess(updateStream::onNext)
     }
 

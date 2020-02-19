@@ -6,23 +6,23 @@ import dagger.android.AndroidInjector
 import dagger.android.DaggerApplication
 import mk.webfactory.template.di.AppComponent
 import mk.webfactory.template.di.DaggerAppComponent
-import mk.webfactory.template.di.UserScopeMonitor
+import mk.webfactory.template.di.UserScopeCreator
 import mk.webfactory.template.log.CrashReportLogger
 import mk.webfactory.template.log.CrashlyticsLogger
 import mk.webfactory.template.log.DebugLogger
-import mk.webfactory.template.model.user.UserSession
+import mk.webfactory.template.model.user.User
 import mk.webfactory.template.util.ActivityLifeCallbacks
 import timber.log.Timber
+import javax.inject.Inject
 
 class App : DaggerApplication() {
 
-    //FIXME: use the crash report logger when user is loaded and screen resumed
     companion object {
         val CRASH_REPORT: CrashReportLogger by lazy { crashReportLogger }
         private lateinit var crashReportLogger: CrashReportLogger
     }
 
-    lateinit var userScopeMonitor: UserScopeMonitor
+    @Inject lateinit var userScopeCreator: UserScopeCreator
     lateinit var appComponent: AppComponent
 
     private val activityLifeCallbacks = object : ActivityLifeCallbacks() {
@@ -34,10 +34,14 @@ class App : DaggerApplication() {
         override fun onApplicationEnteredBackground() {}
     }
 
-    private val userSessionChangeListener = object : UserScopeMonitor.Listener {
+    private val userScopeMonitorListener = object : UserScopeCreator.Listener {
 
-        override fun onUserSessionChanged(userSession: UserSession) {
-            CRASH_REPORT.setLoggedInUser(userSession.user.id + " (active=${userSession.isActive})")
+        override fun onUserScopeCreated(user: User) {
+            CRASH_REPORT.setLoggedInUser(user.id)
+        }
+
+        override fun onUserScopeDestroyed() {
+            CRASH_REPORT.setLoggedInUser("anonymous")
         }
     }
 
@@ -45,18 +49,18 @@ class App : DaggerApplication() {
         super.onCreate()
         AndroidThreeTen.init(this)
         crashReportLogger = initializeLoggingEnvironment()
-        userScopeMonitor = UserScopeMonitor(appComponent.userManager, appComponent)
-            .apply { init(userSessionChangeListener) }
+        userScopeCreator.addUserScopeListener(userScopeMonitorListener)
+        appComponent.userManager.getLoggedInUserBlocking()?.let { userScopeCreator.createUserScopeComponent(it.user) }
         registerActivityLifecycleCallbacks(activityLifeCallbacks)
     }
 
     override fun applicationInjector(): AndroidInjector<out DaggerApplication> {
         return DaggerAppComponent.builder().application(this).build()
-            .also({ appComponent = it })
+            .also { appComponent = it }
     }
 
     override fun androidInjector(): AndroidInjector<Any> {
-        return userScopeMonitor.userScopeComponent?.androidInjector ?: super.androidInjector()
+        return userScopeCreator.userScopeComponent?.androidInjector ?: super.androidInjector()
     }
 
     private fun initializeLoggingEnvironment(): CrashReportLogger {
