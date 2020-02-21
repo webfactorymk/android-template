@@ -2,7 +2,7 @@ package mk.webfactory.template.model.user
 
 import mk.webfactory.template.model.auth.AccessToken
 
-class UserSession(
+data class UserSession(
     val user: User,
     val accessToken: AccessToken?,
     val error: Throwable? = null

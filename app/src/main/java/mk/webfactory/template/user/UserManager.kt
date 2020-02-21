@@ -17,14 +17,16 @@ import javax.inject.Singleton
 
 @Singleton
 class UserManager<U> @Inject constructor(
-    userStorage: Storage<U>,
-    @Internal
-    private val updateStream: BehaviorSubject<U>,
-    private val loginHooks: Lazy<Set<@JvmSuppressWildcards LoginHook<U>>>,
-    private val logoutHooks: Lazy<Set<@JvmSuppressWildcards LogoutHook>>
+        userStorage: Storage<U>,
+        @Internal
+        private val updateStream: BehaviorSubject<U>,
+        private val loginHooks: Lazy<Set<@JvmSuppressWildcards LoginHook<U>>>,
+        private val logoutHooks: Lazy<Set<@JvmSuppressWildcards LogoutHook>>
 ) {
     private val userStore: StorageCache<U> = StorageCache(userStorage)
-    private var authProvider: AuthProvider<U>? = null
+            .apply {
+                get().blockingGet()?.let { updateStream.onNext(it) }
+            }
 
     /**
      * Receive distinct updates on the current user, if any, and all subsequent users.
@@ -53,7 +55,7 @@ class UserManager<U> @Inject constructor(
      * and must be the single source of truth for the user's logged in status.</i>
      */
 
-    fun isLoggedIn() = authProvider != null && userStore.get().blockingGet() != null
+    fun isLoggedIn() = userStore.get().blockingGet() != null
 
     /**
      *  Logs-in the user using the provided [AuthProvider]
@@ -62,34 +64,35 @@ class UserManager<U> @Inject constructor(
      * If the user is already logged in, the user is returned with no additional action.
      */
     fun login(authProvider: AuthProvider<U>): Single<U> {
-        this.authProvider = authProvider
         if (isLoggedIn()) {
             return userStore.get().toSingle()
         }
         return authProvider.login()
-            .flatMap { user -> userStore.save(user).doOnError { Timber.e(it) } }
-            .flatMap { user ->
-                mergeDelayError(loginHooks.get().map { it.postLogin(user) })
-                    .doOnError { Timber.e(it) }
-                    .onErrorComplete()
-                    .andThen(Single.just(user))
-            }
-            .doAfterSuccess(updateStream::onNext)
+                .flatMap { user -> userStore.save(user).doOnError { Timber.e(it) } }
+                .flatMap { user ->
+                    mergeDelayError(loginHooks.get().map { it.postLogin(user) })
+                            .doOnError { Timber.e(it) }
+                            .onErrorComplete()
+                            .andThen(Single.just(user))
+                }
+                .doAfterSuccess(updateStream::onNext)
     }
 
     /**
      * Logs-out the user.
      * If the user is already logged out, the method completes without doing anything.
      */
-    fun logout(): Completable {
+    fun logout(authProvider: AuthProvider<U>): Completable {
         if (!isLoggedIn()) {
             return Completable.complete()
         }
-        return userStore.delete()
-            .andThen(authProvider!!.logout())
-            .andThen(mergeDelayError(logoutHooks.get().map { it.postLogout() }))
-            .doOnError { Timber.e(it) }
-            .onErrorComplete()
+        return authProvider.logout(userStore.get().blockingGet()!!)
+                .doAfterSuccess(updateStream::onNext)
+                .ignoreElement()
+                .andThen(userStore.delete())
+                .andThen(mergeDelayError(logoutHooks.get().map { it.postLogout() }))
+                .doOnError { Timber.e(it) }
+                .onErrorComplete()
     }
 
     internal companion object {

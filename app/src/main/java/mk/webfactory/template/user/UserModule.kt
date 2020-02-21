@@ -26,12 +26,14 @@ import javax.inject.Singleton
 class UserModule {
 
     @Provides
+    @Singleton
     @Internal
     fun provideUserUpdatesSubject(): BehaviorSubject<UserSession> {
         return BehaviorSubject.create<UserSession>()
     }
 
     @Provides
+    @Singleton
     @Named("user_updates")
     fun provideUserUpdates(@Internal updateStream: BehaviorSubject<UserSession>)
             : Observable<UserSession> {
@@ -43,9 +45,9 @@ class UserModule {
     fun provideFlatFileStorage(@ApplicationContext context: Context, gson: Gson)
             : Storage<UserSession> {
         return FlatFileStorage(
-            UserSession::class.java,
-            File(context.filesDir, USER_DATA_FILE),
-            JsonConverter.GsonConverter(gson)
+                UserSession::class.java,
+                File(context.filesDir, USER_DATA_FILE),
+                JsonConverter.GsonConverter(gson)
         )
     }
 
@@ -59,10 +61,10 @@ class UserModule {
 
     @Provides
     @IntoSet
-    fun provideUserScopeLoginHook(userScopeCreator: UserScopeCreator): LoginHook<User> {
-        return object : LoginHook<User> {
-            override fun postLogin(user: User) =
-                Completable.fromAction { userScopeCreator.createUserScopeComponent(user) }
+    fun provideUserScopeLoginHook(userScopeCreator: UserScopeCreator): LoginHook<UserSession> {
+        return object : LoginHook<UserSession> {
+            override fun postLogin(userSession: UserSession) =
+                    Completable.fromAction { userScopeCreator.createUserScopeComponent(userSession.user) }
         }
     }
 
@@ -71,7 +73,7 @@ class UserModule {
     fun provideUserScopeLogoutHook(userScopeCreator: UserScopeCreator): LogoutHook {
         return object : LogoutHook {
             override fun postLogout() =
-                Completable.fromAction { userScopeCreator.destroyUserScopeComponent() }
+                    Completable.fromAction { userScopeCreator.destroyUserScopeComponent() }
         }
     }
 }

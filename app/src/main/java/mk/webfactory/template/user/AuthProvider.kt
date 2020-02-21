@@ -1,6 +1,5 @@
 package mk.webfactory.template.user
 
-import io.reactivex.Completable
 import io.reactivex.Single
 
 /**
@@ -16,5 +15,5 @@ interface AuthProvider<User> {
     /**
      * Logs out the user and always emits a logged out representation of the user.
      */
-    fun logout(): Completable
+    fun logout(user: User): Single<User>
 }
