@@ -1,4 +1,4 @@
-package mk.webfactory.template.feature.home.ui
+package mk.webfactory.template.feature.home.ui.mvp
 
 import android.os.Bundle
 import android.view.LayoutInflater

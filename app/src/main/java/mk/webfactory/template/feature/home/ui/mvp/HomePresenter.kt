@@ -1,4 +1,4 @@
-package mk.webfactory.template.feature.home.ui
+package mk.webfactory.template.feature.home.ui.mvp
 
 import mk.webfactory.template.feature.home.HomeRepository
 import javax.inject.Inject
