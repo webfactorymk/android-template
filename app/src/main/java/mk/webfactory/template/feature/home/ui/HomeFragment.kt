@@ -4,16 +4,14 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import kotlinx.android.synthetic.main.fragment_home.*
 import mk.webfactory.template.R
 import mk.webfactory.template.feature.common.ui.BaseFragment
 import javax.inject.Inject
 
 class HomeFragment
 @Inject constructor() : BaseFragment(), HomeContract.View {
-    //Fixme: kotlin view binding  @BindView(R.id.circular_progress_view)
 
-    //  private Unbinder unbinder;
-    var circularProgressView: View? = null
     @set:Inject
     var presenter: HomeContract.Presenter? = null
 
@@ -26,7 +24,6 @@ class HomeFragment
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        //    unbinder = ButterKnife.bind(this, view);
         return inflater.inflate(R.layout.fragment_home, container, false)
     }
 
@@ -42,10 +39,9 @@ class HomeFragment
 
     override fun onDestroyView() {
         super.onDestroyView()
-        //    unbinder.unbind();
     }
 
     override fun showLoadingIndicator(active: Boolean) {
-        circularProgressView!!.visibility = if (active) View.VISIBLE else View.GONE
+        circular_progress_view!!.visibility = if (active) View.VISIBLE else View.GONE
     }
 }
