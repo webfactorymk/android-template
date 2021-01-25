@@ -3,41 +3,40 @@ package mk.webfactory.template.log
 import android.content.Context
 import android.os.Build
 import android.util.Log
-import com.crashlytics.android.Crashlytics
-import com.crashlytics.android.core.CrashlyticsCore
+import com.google.firebase.crashlytics.FirebaseCrashlytics
 import timber.log.Timber
 import java.util.*
 
 class CrashlyticsLogger(
     private val context: Context,
-    crashlytics: Crashlytics
+    crashlytics: FirebaseCrashlytics
 ) :
     Timber.Tree(), CrashReportLogger {
-    private val crashlytics: CrashlyticsCore = crashlytics.core
+    private val crashlytics: FirebaseCrashlytics = crashlytics
     private val exceptionHandler: CrashlyticsExceptionHandler
     private val lastUsedPages: ArrayList<String>
 
     init {
         lastUsedPages = ArrayList(PAGES_LIST_SIZE)
-        exceptionHandler = CrashlyticsExceptionHandler(crashlytics.core, context)
+        exceptionHandler = CrashlyticsExceptionHandler(crashlytics, context)
         logDeviceInfo()
     }
 
     private fun logDeviceInfo() {
         val dm = context.resources.displayMetrics
-        crashlytics.setString("screenResolution", dm.heightPixels.toString() + "x" + dm.widthPixels)
-        crashlytics.setFloat("screenDensity", dm.density)
-        crashlytics.setInt("apiLevel", Build.VERSION.SDK_INT)
-        crashlytics.setString("manufacturer", Build.MANUFACTURER)
-        crashlytics.setString("model", Build.MODEL)
+        crashlytics.setCustomKey("screenResolution", dm.heightPixels.toString() + "x" + dm.widthPixels)
+        crashlytics.setCustomKey("screenDensity", dm.density)
+        crashlytics.setCustomKey("apiLevel", Build.VERSION.SDK_INT)
+        crashlytics.setCustomKey("manufacturer", Build.MANUFACTURER)
+        crashlytics.setCustomKey("model", Build.MODEL)
     }
 
     override fun setLoggedInUser(userIdentifier: String) {
-        crashlytics.setUserIdentifier(userIdentifier)
+        crashlytics.setUserId(userIdentifier)
     }
 
     override fun setCurrentPage(page: String) {
-        crashlytics.setString("currentPage", page)
+        crashlytics.setCustomKey("currentPage", page)
         lastUsedPages.add(page)
         if (lastUsedPages.size > PAGES_LIST_SIZE) {
             lastUsedPages.removeAt(0)
@@ -52,9 +51,9 @@ class CrashlyticsLogger(
         if (priority == Log.VERBOSE || priority == Log.DEBUG) {
             return
         }
-        crashlytics.log(priority, tag, message)
+        crashlytics.log(message)
         if (t != null) {
-            crashlytics.logException(t)
+            crashlytics.recordException(t)
         }
     }
 

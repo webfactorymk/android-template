@@ -4,13 +4,14 @@ import android.content.Context
 import android.net.ConnectivityManager
 import android.os.StatFs
 import android.os.SystemClock
-import com.crashlytics.android.core.CrashlyticsCore
+import com.google.firebase.crashlytics.FirebaseCrashlytics
+import com.google.firebase.crashlytics.internal.common.CrashlyticsCore
 import mk.webfactory.template.App
 import timber.log.Timber
 import java.util.concurrent.TimeUnit
 
 internal class CrashlyticsExceptionHandler(
-    private val crashlyticsCore: CrashlyticsCore,
+    private val crashlyticsCore: FirebaseCrashlytics,
     context: Context
 ) :
     Thread.UncaughtExceptionHandler {
@@ -44,17 +45,17 @@ internal class CrashlyticsExceptionHandler(
     private fun logCurrentDeviceState() {
         val network =
             (context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager).activeNetworkInfo
-        crashlyticsCore.setString(
+        crashlyticsCore.setCustomKey(
             "networkAccess",
             if (network != null && network.isConnected) network.typeName else "NA"
         )
-        crashlyticsCore.setString("heap", toMbString(Runtime.getRuntime().totalMemory()))
-        crashlyticsCore.setString(
+        crashlyticsCore.setCustomKey("heap", toMbString(Runtime.getRuntime().totalMemory()))
+        crashlyticsCore.setCustomKey(
             "freeMemory",
             toMbString(Runtime.getRuntime().freeMemory())
         )
-        crashlyticsCore.setString("maxHeap", toMbString(Runtime.getRuntime().maxMemory()))
-        crashlyticsCore.setString("freeDisk", toMbString(freeDiskMemory))
+        crashlyticsCore.setCustomKey("maxHeap", toMbString(Runtime.getRuntime().maxMemory()))
+        crashlyticsCore.setCustomKey("freeDisk", toMbString(freeDiskMemory))
     }
 
     private val freeDiskMemory: Long

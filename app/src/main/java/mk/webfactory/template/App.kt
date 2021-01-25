@@ -1,6 +1,6 @@
 package mk.webfactory.template
 
-import com.crashlytics.android.Crashlytics
+import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.jakewharton.threetenabp.AndroidThreeTen
 import dagger.android.AndroidInjector
 import dagger.android.DaggerApplication
@@ -68,7 +68,7 @@ class App : DaggerApplication() {
             if (BuildConfig.DEBUG) {
                 DebugLogger()
             } else {
-                CrashlyticsLogger(this, Crashlytics.getInstance())
+                CrashlyticsLogger(this, FirebaseCrashlytics.getInstance())
             }
 
         Timber.plant(logger as Timber.Tree)

@@ -19,7 +19,7 @@ class ErrorInterceptor(
     @Throws(IOException::class)
     override fun intercept(chain: Interceptor.Chain): Response {
         val response = chain.proceed(chain.request())
-        return when (response.code()) {
+        return when (response.code) {
             400 -> handleBadRequest(response)
             401, 403 -> handleUnauthorizedRequest(chain.request(), response)
             else -> response
@@ -29,8 +29,8 @@ class ErrorInterceptor(
     private fun handleBadRequest(response: Response): Response {
         return try {
             val stringType: Type = object : TypeToken<Map<String, String>>() {}.type
-            val apiError: Map<String, String> = gson.fromJson(response.body()?.string(), stringType)
-            throw ApiErrorException(response.code(), apiError)
+            val apiError: Map<String, String> = gson.fromJson(response.body?.string(), stringType)
+            throw ApiErrorException(response.code, apiError)
         } catch (e: JsonSyntaxException) {
             response
         }
@@ -38,7 +38,7 @@ class ErrorInterceptor(
 
     private fun handleUnauthorizedRequest(request: Request, response: Response): Response {
         val unauthorizedUserException = UnauthorizedUserException(
-            "URL: ${request.url()} \nMessage: ${response.message()}"
+            "URL: ${request.url} \nMessage: ${response.message}"
         )
         unauthorizedUserHandler.onUnauthorizedUserException(unauthorizedUserException)
         throw unauthorizedUserException
