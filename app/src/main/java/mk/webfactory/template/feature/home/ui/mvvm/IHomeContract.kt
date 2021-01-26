@@ -18,7 +18,7 @@ interface IHomeContract {
 
 sealed class HomeEvent {
 
-    // Here add all view events possible. If you need to pass some values throw the events use class instead of object.
+    // Here add all view events possible. If you need to pass some values through the events use class instead of object.
     object OnStart : HomeEvent()
     object OnStop : HomeEvent()
 }
