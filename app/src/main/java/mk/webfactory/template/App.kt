@@ -4,6 +4,7 @@ import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.jakewharton.threetenabp.AndroidThreeTen
 import dagger.android.AndroidInjector
 import dagger.android.DaggerApplication
+import io.reactivex.plugins.RxJavaPlugins
 import mk.webfactory.template.di.AppComponent
 import mk.webfactory.template.di.DaggerAppComponent
 import mk.webfactory.template.di.UserScopeCreator
@@ -48,6 +49,7 @@ class App : DaggerApplication() {
     override fun onCreate() {
         super.onCreate()
         AndroidThreeTen.init(this)
+        RxJavaPlugins.setErrorHandler { Timber.e(it) }
         crashReportLogger = initializeLoggingEnvironment()
         userScopeCreator.addUserScopeListener(userScopeMonitorListener)
         appComponent.userManager.getLoggedInUserBlocking()?.let { userScopeCreator.createUserScopeComponent(it.user) }
