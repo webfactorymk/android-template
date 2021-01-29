@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    package="mk.webfactory.template"> <!-- TODO: Change as applicationId in build.gradle -->
-
+    package="mk.webfactory.template">
+    <!-- TODO: Change as applicationId in build.gradle -->
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+
     <application
         android:name=".App"
         android:allowBackup="true"
@@ -12,8 +13,9 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
-        tools:ignore="GoogleAppIndexingWarning"> <!-- TODO: Remove suppression tools:ignore -->
-
+        tools:ignore="GoogleAppIndexingWarning">
+        <activity android:name=".feature.main.ui.MainActivity"></activity>
+        <!-- TODO: Remove suppression tools:ignore -->
         <activity android:name=".feature.launcher.ui.LauncherActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -24,7 +26,7 @@
         <activity
             android:name=".feature.home.ui.HomeActivity"
             android:launchMode="singleTask" />
-        <activity
-            android:name=".feature.login.ui.LoginActivity" />
+        <activity android:name=".feature.login.ui.LoginActivity" />
     </application>
+
 </manifest>
