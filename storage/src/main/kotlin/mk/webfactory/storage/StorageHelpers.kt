@@ -1,7 +1,7 @@
 package mk.webfactory.storage
 
-import io.reactivex.rxjava3.rxjava3.Single
-import io.reactivex.rxjava3.rxjava3.functions.Function
+import io.reactivex.rxjava3.core.Single
+import io.reactivex.rxjava3.functions.Function
 
 fun <T> deferSaveIn(storage: Storage<T>): Function<T, Single<T>> {
     return deferSaveIn(storage, false)
