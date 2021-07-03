@@ -4,10 +4,10 @@ import android.content.Context
 import android.content.Intent
 import android.content.Intent.*
 import android.os.Bundle
+import androidx.appcompat.app.AppCompatActivity
 import mk.webfactory.template.R
-import mk.webfactory.template.feature.common.ui.BaseActivity
 
-class LoginActivity : BaseActivity() {
+class LoginActivity : AppCompatActivity() {
     companion object {
         fun startActivityNewTask(context: Context) = startActivity(
             context, FLAG_ACTIVITY_NEW_TASK or

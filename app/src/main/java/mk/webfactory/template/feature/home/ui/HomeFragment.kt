@@ -4,13 +4,13 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import mk.webfactory.template.databinding.FragmentHomeBinding
-import mk.webfactory.template.feature.common.ui.BaseFragment
 import javax.inject.Inject
 
 class HomeFragment
-@Inject constructor() : BaseFragment(), IHomeContract.View {
+@Inject constructor() : Fragment() {
 
     private var _binding: FragmentHomeBinding? = null
 
@@ -42,11 +42,11 @@ class HomeFragment
         //TODO implement with DI
         viewModel = HomeViewModel()
 
-        viewModel.handleEvent(HomeEvent.OnStart)
+//        viewModel.handleEvent(HomeEvent.OnStart)
     }
 
     override fun onStop() {
-        viewModel.handleEvent(HomeEvent.OnStop)
+//        viewModel.handleEvent(HomeEvent.OnStop)
         super.onStop()
     }
 
@@ -59,7 +59,7 @@ class HomeFragment
         binding.circularProgressView.visibility = if (active) View.VISIBLE else View.GONE
     }
 
-    override fun observe() {
+    fun observe() {
         // This is an example how to use МVVM pattern and observe the changes from the modelView
         viewModel.progressBarState.observe(
             viewLifecycleOwner,
@@ -69,7 +69,6 @@ class HomeFragment
         )
     }
 
-    override fun setUpClickListeners() {
-        //TODO implement this method by passing the corresponding event to the viewModel with viewModel.handleEvent(HomeEvent) method
+    fun setUpClickListeners() {
     }
 }

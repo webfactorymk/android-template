@@ -3,12 +3,11 @@ package mk.webfactory.template.feature.home.ui
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import androidx.appcompat.app.AppCompatActivity
 import mk.webfactory.template.R
-import mk.webfactory.template.feature.common.ui.BaseActivity
-import mk.webfactory.template.feature.home.ui.mvp.HomeFragment
 import javax.inject.Inject
 
-class HomeActivity : BaseActivity() {
+class HomeActivity : AppCompatActivity() {
 
     @set:Inject
     var injectedFragment: HomeFragment? = null
