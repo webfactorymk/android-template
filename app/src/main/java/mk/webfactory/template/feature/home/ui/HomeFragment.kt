@@ -1,4 +1,4 @@
-package mk.webfactory.template.feature.home.ui.mvvm
+package mk.webfactory.template.feature.home.ui
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -9,7 +9,7 @@ import mk.webfactory.template.databinding.FragmentHomeBinding
 import mk.webfactory.template.feature.common.ui.BaseFragment
 import javax.inject.Inject
 
-class HomeView
+class HomeFragment
 @Inject constructor() : BaseFragment(), IHomeContract.View {
 
     private var _binding: FragmentHomeBinding? = null

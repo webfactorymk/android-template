@@ -4,7 +4,7 @@ import dagger.Module
 import dagger.android.ContributesAndroidInjector
 import mk.webfactory.template.di.scope.ActivityScope
 import mk.webfactory.template.feature.home.ui.HomeActivity
-import mk.webfactory.template.feature.home.ui.HomePresenterModule
+import mk.webfactory.template.feature.home.ui.HomeUiModule
 
 /**
  * Binding of [Activities][Activity] within the [UserScope]
@@ -16,6 +16,6 @@ import mk.webfactory.template.feature.home.ui.HomePresenterModule
 abstract class UserBindingModule {
 
     @ActivityScope
-    @ContributesAndroidInjector(modules = [HomePresenterModule::class])
+    @ContributesAndroidInjector(modules = [HomeUiModule::class])
     abstract fun homeActivity(): HomeActivity?
 }
