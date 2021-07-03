@@ -13,6 +13,12 @@ import javax.inject.Singleton
  *
  * and destroyed:
  * - on user logout
+ *
+ * and recreated on:
+ * - new user login after session expiry
+ *
+ * and kept intact on:
+ * - same user login after session expiry
  */
 @Singleton
 class UserScopeCreator @Inject constructor(
