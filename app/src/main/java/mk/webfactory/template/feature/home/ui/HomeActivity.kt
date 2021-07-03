@@ -5,7 +5,7 @@ import android.content.Intent
 import android.os.Bundle
 import mk.webfactory.template.R
 import mk.webfactory.template.feature.common.ui.BaseActivity
-import mk.webfactory.template.feature.login.ui.LoginActivity
+import mk.webfactory.template.feature.home.ui.mvp.HomeFragment
 import javax.inject.Inject
 
 

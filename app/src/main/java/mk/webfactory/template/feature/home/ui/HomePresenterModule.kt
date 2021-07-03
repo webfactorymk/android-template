@@ -5,6 +5,9 @@ import dagger.Module
 import dagger.android.ContributesAndroidInjector
 import mk.webfactory.template.di.scope.ActivityScope
 import mk.webfactory.template.di.scope.FragmentScope
+import mk.webfactory.template.feature.home.ui.mvp.HomeContract
+import mk.webfactory.template.feature.home.ui.mvp.HomeFragment
+import mk.webfactory.template.feature.home.ui.mvp.HomePresenter
 
 @Module
 abstract class HomePresenterModule {
