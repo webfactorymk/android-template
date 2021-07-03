@@ -1,8 +1,8 @@
 package mk.webfactory.storage
 
-import io.reactivex.Completable
-import io.reactivex.Maybe
-import io.reactivex.Single
+import io.reactivex.rxjava3.Completable
+import io.reactivex.rxjava3.Maybe
+import io.reactivex.rxjava3.Single
 
 class InMemoryStorage<T> : Storage<T> {
 

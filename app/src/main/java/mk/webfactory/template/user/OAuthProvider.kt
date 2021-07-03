@@ -1,6 +1,6 @@
 package mk.webfactory.template.user
 
-import io.reactivex.Single
+import io.reactivex.rxjava3.core.Single
 import mk.webfactory.template.model.auth.AccessToken
 import mk.webfactory.template.model.user.UserSession
 import mk.webfactory.template.network.api.UserService

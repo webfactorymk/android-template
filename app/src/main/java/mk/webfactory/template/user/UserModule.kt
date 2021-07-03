@@ -6,9 +6,9 @@ import dagger.Module
 import dagger.Provides
 import dagger.multibindings.ElementsIntoSet
 import dagger.multibindings.IntoSet
-import io.reactivex.Completable
-import io.reactivex.Observable
-import io.reactivex.subjects.BehaviorSubject
+import io.reactivex.rxjava3.core.Completable
+import io.reactivex.rxjava3.core.Observable
+import io.reactivex.rxjava3.subjects.BehaviorSubject
 import mk.webfactory.storage.FlatFileStorage
 import mk.webfactory.storage.JsonConverter
 import mk.webfactory.storage.Storage

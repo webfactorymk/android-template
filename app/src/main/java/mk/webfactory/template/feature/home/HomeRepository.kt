@@ -1,8 +1,8 @@
 package mk.webfactory.template.feature.home
 
-import io.reactivex.Completable
-import io.reactivex.Maybe
-import io.reactivex.annotations.NonNull
+import androidx.annotation.NonNull
+import io.reactivex.rxjava3.core.Completable
+import io.reactivex.rxjava3.core.Maybe
 import mk.webfactory.template.di.qualifier.Local
 import mk.webfactory.template.di.qualifier.Remote
 import mk.webfactory.template.di.scope.UserScope

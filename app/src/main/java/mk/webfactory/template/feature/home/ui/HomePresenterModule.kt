@@ -18,9 +18,10 @@ abstract class HomePresenterModule {
     @ActivityScope
     @Binds
     abstract fun homePresenter(presenter: HomePresenter?): HomeContract.Presenter? //todo include in details screen
-//@Provides
-//@ActivityScoped
-//static String provideTaskId(TaskDetailActivity activity) {
-//    return activity.getIntent().getStringExtra(EXTRA_TASK_ID);
-//}
+
+    //@Provides
+    //@ActivityScoped
+    //static String provideTaskId(TaskDetailActivity activity) {
+    //    return activity.getIntent().getStringExtra(EXTRA_TASK_ID);
+    //}
 }

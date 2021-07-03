@@ -1,6 +1,6 @@
 package mk.webfactory.template.user
 
-import io.reactivex.Single
+import io.reactivex.rxjava3.core.Single
 
 /**
  * Provides login and logout mechanism for a [User].

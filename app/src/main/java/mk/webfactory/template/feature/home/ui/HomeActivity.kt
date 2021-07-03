@@ -8,7 +8,6 @@ import mk.webfactory.template.feature.common.ui.BaseActivity
 import mk.webfactory.template.feature.home.ui.mvp.HomeFragment
 import javax.inject.Inject
 
-
 class HomeActivity : BaseActivity() {
 
     @set:Inject

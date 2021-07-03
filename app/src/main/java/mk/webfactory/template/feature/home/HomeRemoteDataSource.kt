@@ -1,7 +1,7 @@
 package mk.webfactory.template.feature.home
 
-import io.reactivex.Completable
-import io.reactivex.Maybe
+import io.reactivex.rxjava3.core.Completable
+import io.reactivex.rxjava3.core.Maybe
 import mk.webfactory.template.network.api.UserService
 
 /**

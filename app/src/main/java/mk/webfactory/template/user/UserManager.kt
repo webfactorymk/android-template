@@ -2,12 +2,12 @@ package mk.webfactory.template.user
 
 import androidx.annotation.CheckResult
 import dagger.Lazy
-import io.reactivex.Completable
-import io.reactivex.Completable.mergeDelayError
-import io.reactivex.Maybe
-import io.reactivex.Observable
-import io.reactivex.Single
-import io.reactivex.subjects.BehaviorSubject
+import io.reactivex.rxjava3.core.Completable
+import io.reactivex.rxjava3.core.Completable.mergeDelayError
+import io.reactivex.rxjava3.core.Maybe
+import io.reactivex.rxjava3.core.Observable
+import io.reactivex.rxjava3.core.Single
+import io.reactivex.rxjava3.subjects.BehaviorSubject
 import mk.webfactory.storage.Storage
 import mk.webfactory.storage.StorageCache
 import mk.webfactory.template.di.qualifier.Internal

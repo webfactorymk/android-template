@@ -1,6 +1,6 @@
 package mk.webfactory.template.user
 
-import io.reactivex.Completable
+import io.reactivex.rxjava3.core.Completable
 
 /**
  * Provides actions to be executed during the [UserManager&#39;s][UserManager]
