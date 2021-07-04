@@ -58,16 +58,16 @@ class UserManager<U> @Inject constructor(
     fun isLoggedIn() = userStore.get().blockingGet() != null
 
     /**
-     *  Logs-in the user using the provided [AuthProvider]
+     *  Logs-in the user using the provided [AuthDelegate]
      *  and triggers an update to the user [updateStream].
      *
      * If the user is already logged in, the user is returned with no additional action.
      */
-    fun login(authProvider: AuthProvider<U>): Single<U> {
+    fun login(authDelegate: AuthDelegate<U>): Single<U> {
         if (isLoggedIn()) {
             return userStore.get().toSingle()
         }
-        return authProvider.login()
+        return authDelegate.login()
                 .flatMap { user -> userStore.save(user).doOnError { Timber.e(it) } }
                 .flatMap { user ->
                     mergeDelayError(loginHooks.get().map { it.postLogin(user) })
@@ -82,11 +82,11 @@ class UserManager<U> @Inject constructor(
      * Logs-out the user.
      * If the user is already logged out, the method completes without doing anything.
      */
-    fun logout(authProvider: AuthProvider<U>): Completable {
+    fun logout(authDelegate: AuthDelegate<U>): Completable {
         if (!isLoggedIn()) {
             return Completable.complete()
         }
-        return authProvider.logout(userStore.get().blockingGet()!!)
+        return authDelegate.logout(userStore.get().blockingGet()!!)
                 .doAfterSuccess(updateStream::onNext)
                 .ignoreElement()
                 .andThen(userStore.delete())

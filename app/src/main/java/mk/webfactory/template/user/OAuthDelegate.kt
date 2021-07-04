@@ -7,19 +7,19 @@ import mk.webfactory.template.network.api.UserService
 import mk.webfactory.template.network.http.OAuthInterceptor
 import javax.inject.Inject
 
-class OAuthProviderPrototype @Inject constructor(
+class OAuthDelegateProvider @Inject constructor(
         private val service: UserService,
         private val interceptor: OAuthInterceptor
 ) {
 
-    fun withToken(token: AccessToken) = OAuthProvider(service, interceptor, token)
+    fun withToken(token: AccessToken) = OAuthDelegate(service, interceptor, token)
 }
 
-class OAuthProvider(
+class OAuthDelegate(
         private val userService: UserService,
         private val requestInterceptor: OAuthInterceptor,
         private val token: AccessToken
-) : AuthProvider<UserSession> {
+) : AuthDelegate<UserSession> {
 
     override fun login(): Single<UserSession> {
         return userService.login().map { user -> UserSession(user, token) }

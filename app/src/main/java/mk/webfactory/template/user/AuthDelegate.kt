@@ -3,9 +3,9 @@ package mk.webfactory.template.user
 import io.reactivex.rxjava3.core.Single
 
 /**
- * Provides login and logout mechanism for a [User].
+ * Delegates the login and logout mechanism for a [User].
  */
-interface AuthProvider<User> {
+interface AuthDelegate<User> {
 
     /**
      * Logs in the user and emits the logged in user value.
