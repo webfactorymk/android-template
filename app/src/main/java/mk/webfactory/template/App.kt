@@ -60,8 +60,7 @@ class App : Application() {
         RxJavaPlugins.setErrorHandler { Timber.e(it) }
         crashReportLogger = initializeLoggingEnvironment()
         userScopeComponentManager.addUserScopeListener(userScopeMonitorListener)
-        userManager.getLoggedInUserBlocking()
-            ?.let { userScopeComponentManager.createUserScopeComponent(it.user) }
+        userManager.preloadUser().blockingAwait()
         registerActivityLifecycleCallbacks(activityLifeCallbacks)
     }
 

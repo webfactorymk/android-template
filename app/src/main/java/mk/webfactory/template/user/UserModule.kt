@@ -9,14 +9,15 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import dagger.multibindings.ElementsIntoSet
 import dagger.multibindings.IntoSet
-import io.reactivex.rxjava3.core.Completable
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.subjects.BehaviorSubject
 import mk.webfactory.storage.FlatFileStorage
 import mk.webfactory.storage.JsonConverter
 import mk.webfactory.storage.Storage
+import mk.webfactory.storage.StorageCache
 import mk.webfactory.template.config.USER_DATA_FILE
 import mk.webfactory.template.di.UserScopeComponentManager
+import mk.webfactory.template.di.UserScopeEventHook
 import mk.webfactory.template.di.qualifier.Internal
 import mk.webfactory.template.model.user.User
 import mk.webfactory.template.model.user.UserSession
@@ -32,7 +33,7 @@ class UserModule {
     @Singleton
     @Internal
     fun provideUserUpdatesSubject(): BehaviorSubject<UserSession> {
-        return BehaviorSubject.create<UserSession>()
+        return BehaviorSubject.create()
     }
 
     @Provides
@@ -45,38 +46,22 @@ class UserModule {
 
     @Provides
     @Singleton
-    fun provideFlatFileStorage(@ApplicationContext context: Context, gson: Gson)
+    fun provideUserStorage(@ApplicationContext context: Context, gson: Gson)
             : Storage<UserSession> {
-        return FlatFileStorage(
-                UserSession::class.java,
-                File(context.filesDir, USER_DATA_FILE),
-                JsonConverter.GsonConverter(gson)
-        )
+        //todo provide keystore encrypted storage
+        return StorageCache(FlatFileStorage(
+            UserSession::class.java,
+            File(context.filesDir, USER_DATA_FILE),
+            JsonConverter.GsonConverter(gson)
+        ))
     }
 
     @Provides
     @ElementsIntoSet
-    fun provideDefaultLogoutHookSet(): Set<LogoutHook> = emptySet()
-
-    @Provides
-    @ElementsIntoSet
-    fun provideDefaultLoginHookSet(): Set<LoginHook<User>> = emptySet()
+    fun provideDefaultUserEventHookSet(): Set<UserEventHook<User>> = emptySet()
 
     @Provides
     @IntoSet
-    fun provideUserScopeLoginHook(userScopeManager: UserScopeComponentManager): LoginHook<UserSession> {
-        return object : LoginHook<UserSession> {
-            override fun postLogin(userSession: UserSession) =
-                    Completable.fromAction { userScopeManager.createUserScopeComponent(userSession.user) }
-        }
-    }
-
-    @Provides
-    @IntoSet
-    fun provideUserScopeLogoutHook(userScopeManager: UserScopeComponentManager): LogoutHook {
-        return object : LogoutHook {
-            override fun postLogout() =
-                    Completable.fromAction { userScopeManager.destroyUserScopeComponent() }
-        }
-    }
+    fun provideUserScopeEventHook(userScopeManager: UserScopeComponentManager) =
+        UserScopeEventHook(userScopeManager)
 }

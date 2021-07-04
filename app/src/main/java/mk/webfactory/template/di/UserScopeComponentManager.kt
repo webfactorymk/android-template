@@ -1,34 +1,30 @@
 package mk.webfactory.template.di
 
 import dagger.hilt.EntryPoints
-import mk.webfactory.template.feature.home.HomeRepository
 import mk.webfactory.template.model.user.User
 import javax.inject.Inject
 import javax.inject.Provider
 import javax.inject.Singleton
 
 /**
- * Creates and destroys the [UserScopeComponent], notifying all added listeners.
+ * Manages the [UserScopeComponent]
  *
- * The user scope component needs to be created synchronously on the following events:
- * - on app start if there is a logged in user
- * - on user login
- *
- * and destroyed:
- * - on user logout
- *
- * and recreated on:
- * - new user login after session expiry
- *
- * and kept intact on:
- * - same user login after session expiry
+ * - holds an instance
+ * - offers dagger hilt entry point
+ * - offers create and destroy methods
+ * - offers listeners for create and destroy events
  */
 @Singleton
 class UserScopeComponentManager @Inject constructor(
     private val userScopeComponentProvider: Provider<UserScopeComponent.Builder>
 ) {
 
+    @Volatile
+    var userId: String? = null
+        private set
+
     var userScopeComponent: UserScopeComponent? = null
+        @Synchronized get
         private set
 
     val entryPoint: UserScopeComponentEntryPoint
@@ -40,17 +36,27 @@ class UserScopeComponentManager @Inject constructor(
 
     fun removeUserScopeListener(listener: Listener) = listeners.remove(listener)
 
+    @Synchronized
+    fun isUserScopeComponentCreated() = userScopeComponent != null
+
+    @Synchronized
     fun createUserScopeComponent(user: User) {
         if (userScopeComponent != null) {
-            return
+            //will be recreated
         }
+        userId = user.id
         userScopeComponent = userScopeComponentProvider.get()
-            .setUser(user)
+            .setUser(user.id)
             .build()
         listeners.forEach { it.onUserScopeCreated(user) }
     }
 
+    @Synchronized
     fun destroyUserScopeComponent() {
+        if (userScopeComponent == null) {
+            return
+        }
+        userId = null
         userScopeComponent = null
         listeners.forEach { it.onUserScopeDestroyed() }
     }

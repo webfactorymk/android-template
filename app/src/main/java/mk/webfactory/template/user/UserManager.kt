@@ -9,7 +9,6 @@ import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.core.Single
 import io.reactivex.rxjava3.subjects.BehaviorSubject
 import mk.webfactory.storage.Storage
-import mk.webfactory.storage.StorageCache
 import mk.webfactory.template.di.qualifier.Internal
 import timber.log.Timber
 import javax.inject.Inject
@@ -17,16 +16,24 @@ import javax.inject.Singleton
 
 @Singleton
 class UserManager<U> @Inject constructor(
-        userStorage: Storage<U>,
-        @Internal
-        private val updateStream: BehaviorSubject<U>,
-        private val loginHooks: Lazy<Set<@JvmSuppressWildcards LoginHook<U>>>,
-        private val logoutHooks: Lazy<Set<@JvmSuppressWildcards LogoutHook>>
+    private val userStore: Storage<U>,
+    @Internal private val updateStream: BehaviorSubject<U>,
+    private val userEventHooks: Lazy<Set<@JvmSuppressWildcards UserEventHook<U>>>
 ) {
-    private val userStore: StorageCache<U> = StorageCache(userStorage)
-            .apply {
-                get().blockingGet()?.let { updateStream.onNext(it) }
-            }
+
+    /**
+     * Called to ensure the user is loaded from disk and awaits all
+     * [UserEventHook.onUserLoaded] hooks.
+     */
+    @CheckResult
+    fun preloadUser(): Completable = userStore.get()
+        .doAfterSuccess(updateStream::onNext)
+        .flatMapCompletable { user ->
+            mergeDelayError(
+                userEventHooks.get().map { it.onUserLoaded(user) })
+        }
+        .doOnError { Timber.e(it) }
+        .onErrorComplete()
 
     /**
      * Receive distinct updates on the current user, if any, and all subsequent users.
@@ -68,14 +75,14 @@ class UserManager<U> @Inject constructor(
             return userStore.get().toSingle()
         }
         return authDelegate.login()
-                .flatMap { user -> userStore.save(user).doOnError { Timber.e(it) } }
-                .flatMap { user ->
-                    mergeDelayError(loginHooks.get().map { it.postLogin(user) })
-                            .doOnError { Timber.e(it) }
-                            .onErrorComplete()
-                            .andThen(Single.just(user))
-                }
-                .doAfterSuccess(updateStream::onNext)
+            .flatMap { user -> userStore.save(user).doOnError { Timber.e(it) } }
+            .flatMap { user ->
+                mergeDelayError(userEventHooks.get().map { it.postLogin(user) })
+                    .doOnError { Timber.e(it) }
+                    .onErrorComplete()
+                    .andThen(Single.just(user))
+            }
+            .doAfterSuccess(updateStream::onNext)
     }
 
     /**
@@ -87,12 +94,12 @@ class UserManager<U> @Inject constructor(
             return Completable.complete()
         }
         return authDelegate.logout(userStore.get().blockingGet()!!)
-                .doAfterSuccess(updateStream::onNext)
-                .ignoreElement()
-                .andThen(userStore.delete())
-                .andThen(mergeDelayError(logoutHooks.get().map { it.postLogout() }))
-                .doOnError { Timber.e(it) }
-                .onErrorComplete()
+            .doAfterSuccess(updateStream::onNext)
+            .ignoreElement()
+            .andThen(userStore.delete())
+            .andThen(mergeDelayError(userEventHooks.get().map { it.postLogout() }))
+            .doOnError { Timber.e(it) }
+            .onErrorComplete()
     }
 
     internal companion object {
