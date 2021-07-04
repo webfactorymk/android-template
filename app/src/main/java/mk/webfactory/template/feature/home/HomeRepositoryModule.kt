@@ -8,7 +8,7 @@ import mk.webfactory.template.di.scope.user.UserScopeComponent
 import mk.webfactory.template.di.qualifier.Local
 import mk.webfactory.template.di.qualifier.Remote
 import mk.webfactory.template.model.user.User
-import mk.webfactory.template.network.api.UserService
+import mk.webfactory.template.network.api.UserApiService
 import javax.inject.Named
 
 @InstallIn(UserScopeComponent::class)
@@ -29,8 +29,8 @@ class HomeRepositoryModule {
     @Provides
     @Remote
     fun provideHomeRemoteDataSource(
-        @Named("userId") userId: String, userService: UserService
+        @Named("userId") userId: String, userApiService: UserApiService
     ): HomeDataSource {
-        return HomeRemoteDataSource(userId, userService)
+        return HomeRemoteDataSource(userId, userApiService)
     }
 }

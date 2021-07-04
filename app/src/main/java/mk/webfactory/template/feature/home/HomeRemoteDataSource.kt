@@ -2,12 +2,12 @@ package mk.webfactory.template.feature.home
 
 import io.reactivex.rxjava3.core.Completable
 import io.reactivex.rxjava3.core.Maybe
-import mk.webfactory.template.network.api.UserService
+import mk.webfactory.template.network.api.UserApiService
 
 /**
  * Concrete implementation of a data source that draws data from server.
  */
-class HomeRemoteDataSource(userId: String, private val userService: UserService) :
+class HomeRemoteDataSource(userId: String, private val userApiService: UserApiService) :
     HomeDataSource {
 
     override fun getSomething(): Maybe<Any> {

@@ -12,7 +12,7 @@ import javax.inject.Singleton
 class ApiServiceModule {
     @Provides
     @Singleton
-    fun provideUserService(retrofit: Retrofit): UserService {
-        return retrofit.create(UserService::class.java)
+    fun provideUserService(retrofit: Retrofit): UserApiService {
+        return retrofit.create(UserApiService::class.java)
     }
 }
