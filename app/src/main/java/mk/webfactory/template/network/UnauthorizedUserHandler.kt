@@ -1,7 +1,7 @@
 package mk.webfactory.template.network
 
 import android.content.Context
-import mk.webfactory.template.di.qualifier.ApplicationContext
+import dagger.hilt.android.qualifiers.ApplicationContext
 import mk.webfactory.template.feature.login.ui.LoginActivity
 import timber.log.Timber
 import javax.inject.Inject

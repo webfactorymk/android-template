@@ -4,10 +4,8 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import mk.webfactory.template.di.scope.user.UserScopeComponentManager
-import mk.webfactory.template.di.scope.user.UserScope
 import javax.inject.Inject
 
-@UserScope
 @HiltViewModel
 class HomeViewModel @Inject constructor(
     userScopeComponentManager: UserScopeComponentManager

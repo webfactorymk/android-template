@@ -9,10 +9,9 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import dagger.hilt.android.AndroidEntryPoint
 import mk.webfactory.template.databinding.FragmentHomeBinding
-import javax.inject.Inject
 
 @AndroidEntryPoint
-class HomeFragment @Inject constructor() : Fragment() {
+class HomeFragment : Fragment() {
 
     private var _binding: FragmentHomeBinding? = null
 
@@ -57,7 +56,7 @@ class HomeFragment @Inject constructor() : Fragment() {
         binding.circularProgressView.visibility = if (active) View.VISIBLE else View.GONE
     }
 
-    fun observe() {
+    private fun observe() {
         // This is an example how to use МVVM pattern and observe the changes from the modelView
         viewModel.progressBarState.observe(
             viewLifecycleOwner,
@@ -67,6 +66,6 @@ class HomeFragment @Inject constructor() : Fragment() {
         )
     }
 
-    fun setUpClickListeners() {
+    private fun setUpClickListeners() {
     }
 }

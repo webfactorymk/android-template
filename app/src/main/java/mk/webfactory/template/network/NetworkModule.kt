@@ -5,6 +5,7 @@ import com.google.gson.GsonBuilder
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.components.SingletonComponent
 import io.reactivex.rxjava3.core.Observable
 import mk.webfactory.template.BuildConfig
 import mk.webfactory.template.model.user.UserSession

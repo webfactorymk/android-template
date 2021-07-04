@@ -2,9 +2,10 @@ package mk.webfactory.template.di.scope.user
 
 import dagger.BindsInstance
 import dagger.hilt.DefineComponent
+import dagger.hilt.components.SingletonComponent
 
 @UserScope
-@DefineComponent(parent = ApplicationComponent::class)
+@DefineComponent(parent = SingletonComponent::class)
 interface UserScopeComponent {
 
     @DefineComponent.Builder
