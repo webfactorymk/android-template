@@ -10,6 +10,9 @@ import io.reactivex.rxjava3.core.Single
 import io.reactivex.rxjava3.subjects.BehaviorSubject
 import mk.webfactory.storage.Storage
 import mk.webfactory.template.di.qualifier.Internal
+import mk.webfactory.template.model.user.UserSession
+import mk.webfactory.template.network.UnauthorizedUserException
+import mk.webfactory.template.network.api.UserApiService
 import timber.log.Timber
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -17,6 +20,7 @@ import javax.inject.Singleton
 @Singleton
 class UserManager<U> @Inject constructor(
     private val userStore: Storage<U>,
+    private val userApiService: UserApiService,
     @Internal private val updateStream: BehaviorSubject<U>,
     private val userEventHooks: Lazy<Set<@JvmSuppressWildcards UserEventHook<U>>>
 ) {
@@ -61,20 +65,26 @@ class UserManager<U> @Inject constructor(
      * but mind that this method is used in this component internally
      * and must be the single source of truth for the user's logged in status.</i>
      */
-
-    fun isLoggedIn() = userStore.get().blockingGet() != null
+    //todo modify behavior to fit your need, this is a very lazy example
+    fun isLoggedIn() = userStore.get().blockingGet()?.let {
+        if (it is UserSession) it.isActive else true
+    } ?: false
 
     /**
      *  Logs-in the user using the provided [AuthDelegate]
      *  and triggers an update to the user [updateStream].
      *
-     * If the user is already logged in, the user is returned with no additional action.
+     *  If the user is already logged in, the user is returned with no additional action.
      */
-    fun login(authDelegate: AuthDelegate<U>): Single<U> {
+    @CheckResult
+    fun login(authDelegate: AuthDelegate<U>): Single<U> = login(authDelegate::login)
+
+    @CheckResult
+    fun login(loginDelegateFn: () -> Single<U>): Single<U> {
         if (isLoggedIn()) {
             return userStore.get().toSingle()
         }
-        return authDelegate.login()
+        return loginDelegateFn()
             .flatMap { user -> userStore.save(user).doOnError { Timber.e(it) } }
             .flatMap { user ->
                 mergeDelayError(userEventHooks.get().map { it.postLogin(user) })
@@ -89,11 +99,15 @@ class UserManager<U> @Inject constructor(
      * Logs-out the user.
      * If the user is already logged out, the method completes without doing anything.
      */
-    fun logout(authDelegate: AuthDelegate<U>): Completable {
+    @CheckResult
+    fun logout(authDelegate: AuthDelegate<U>): Completable = logout(authDelegate::logout)
+
+    @CheckResult
+    fun logout(logoutDelegateFn: (user: U) -> Single<U>): Completable {
         if (!isLoggedIn()) {
             return Completable.complete()
         }
-        return authDelegate.logout(userStore.get().blockingGet()!!)
+        return logoutDelegateFn(userStore.get().blockingGet()!!)
             .doAfterSuccess(updateStream::onNext)
             .ignoreElement()
             .andThen(userStore.delete())
@@ -101,6 +115,19 @@ class UserManager<U> @Inject constructor(
             .doOnError { Timber.e(it) }
             .onErrorComplete()
     }
+
+    @CheckResult
+    fun updateUser(newUser: U): Single<U> = Single.fromCallable {
+        if (isLoggedIn().not()) {
+            Timber.e("UserManager - Updating user error: User logged out!")
+            userStore.delete().blockingAwait()
+            throw UnauthorizedUserException("Updating user on logged out usr")
+        }
+        newUser
+    }
+        //.flatMap { userApiService.updateUserProfile(it) }
+        .flatMap { userStore.save(it) }
+        .doAfterSuccess(updateStream::onNext)
 
     internal companion object {
         fun <U> hideUpdatesStream(updateStream: BehaviorSubject<U>): Observable<U> {
