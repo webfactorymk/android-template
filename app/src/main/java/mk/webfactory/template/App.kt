@@ -1,8 +1,8 @@
 package mk.webfactory.template
 
+import android.app.Application
 import com.google.firebase.crashlytics.FirebaseCrashlytics
-import dagger.android.AndroidInjector
-import dagger.android.DaggerApplication
+import dagger.hilt.android.HiltAndroidApp
 import io.reactivex.rxjava3.plugins.RxJavaPlugins
 import mk.webfactory.template.di.AppComponent
 import mk.webfactory.template.di.DaggerAppComponent
@@ -13,17 +13,18 @@ import mk.webfactory.template.log.DebugLogger
 import mk.webfactory.template.model.user.User
 import mk.webfactory.template.util.ActivityLifeCallbacks
 import timber.log.Timber
-import javax.inject.Inject
 
-class App : DaggerApplication() {
+@HiltAndroidApp
+class App : Application() {
 
     companion object {
         val CRASH_REPORT: CrashReportLogger by lazy { crashReportLogger }
         private lateinit var crashReportLogger: CrashReportLogger
     }
 
-    @Inject lateinit var userScopeCreator: UserScopeCreator
-    lateinit var appComponent: AppComponent
+    val appComponent: AppComponent by lazy {
+        initializeDaggerAppComponent()
+    }
 
     private val activityLifeCallbacks = object : ActivityLifeCallbacks() {
 
@@ -50,17 +51,13 @@ class App : DaggerApplication() {
         RxJavaPlugins.setErrorHandler { Timber.e(it) }
         crashReportLogger = initializeLoggingEnvironment()
         userScopeCreator.addUserScopeListener(userScopeMonitorListener)
-        appComponent.userManager.getLoggedInUserBlocking()?.let { userScopeCreator.createUserScopeComponent(it.user) }
+        appComponent.userManager.getLoggedInUserBlocking()
+            ?.let { userScopeCreator.createUserScopeComponent(it.user) }
         registerActivityLifecycleCallbacks(activityLifeCallbacks)
     }
 
-    override fun applicationInjector(): AndroidInjector<out DaggerApplication> {
-        return DaggerAppComponent.builder().application(this).build()
-            .also { appComponent = it }
-    }
-
-    override fun androidInjector(): AndroidInjector<Any> {
-        return userScopeCreator.userScopeComponent?.androidInjector ?: super.androidInjector()
+    private fun initializeDaggerAppComponent(): AppComponent {
+        return DaggerAppComponent.factory().create(applicationContext)
     }
 
     private fun initializeLoggingEnvironment(): CrashReportLogger {

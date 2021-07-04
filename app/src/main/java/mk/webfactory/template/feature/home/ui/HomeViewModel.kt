@@ -2,8 +2,11 @@ package mk.webfactory.template.feature.home.ui
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import mk.webfactory.template.di.scope.UserScope
 
-class HomeViewModel : ViewModel() {
+@UserScope
+@HiltViewModel
+class HomeViewModel @ViewModelInject constructor() : ViewModel() {
 
     var progressBarState = MutableLiveData<Boolean>()
 

@@ -2,6 +2,7 @@ package mk.webfactory.template.feature.home
 
 import dagger.Module
 import dagger.Provides
+import dagger.hilt.InstallIn
 import mk.webfactory.storage.InMemoryStorage
 import mk.webfactory.template.di.qualifier.Local
 import mk.webfactory.template.di.qualifier.Remote
@@ -9,6 +10,7 @@ import mk.webfactory.template.model.user.User
 import mk.webfactory.template.network.api.UserService
 import javax.inject.Named
 
+@InstallIn(UserScopeComponent::class)
 @Module
 class HomeRepositoryModule {
     @Provides

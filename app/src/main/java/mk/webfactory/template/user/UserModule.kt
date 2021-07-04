@@ -4,6 +4,7 @@ import android.content.Context
 import com.google.gson.Gson
 import dagger.Module
 import dagger.Provides
+import dagger.hilt.InstallIn
 import dagger.multibindings.ElementsIntoSet
 import dagger.multibindings.IntoSet
 import io.reactivex.rxjava3.core.Completable
@@ -22,6 +23,7 @@ import java.io.File
 import javax.inject.Named
 import javax.inject.Singleton
 
+@InstallIn(SingletonComponent::class)
 @Module
 class UserModule {
 

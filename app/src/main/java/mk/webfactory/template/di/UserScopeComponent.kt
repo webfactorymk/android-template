@@ -2,7 +2,6 @@ package mk.webfactory.template.di
 
 import dagger.BindsInstance
 import dagger.Subcomponent
-import dagger.android.DispatchingAndroidInjector
 import mk.webfactory.template.di.scope.UserScope
 import mk.webfactory.template.feature.home.HomeRepositoryModule
 import mk.webfactory.template.model.user.User
@@ -10,7 +9,6 @@ import mk.webfactory.template.model.user.User
 @UserScope
 @Subcomponent(
     modules = [
-        UserBindingModule::class,
         HomeRepositoryModule::class
         //TODO: Insert user scoped modules here (example: MockUserDataModule.class)
     ]

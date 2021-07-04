@@ -4,6 +4,7 @@ import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import dagger.Module
 import dagger.Provides
+import dagger.hilt.InstallIn
 import io.reactivex.rxjava3.core.Observable
 import mk.webfactory.template.BuildConfig
 import mk.webfactory.template.model.user.UserSession
@@ -20,6 +21,7 @@ import java.time.ZonedDateTime
 import javax.inject.Named
 import javax.inject.Singleton
 
+@InstallIn(SingletonComponent::class)
 @Module
 class NetworkModule {
 

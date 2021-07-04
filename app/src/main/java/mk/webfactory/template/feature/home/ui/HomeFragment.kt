@@ -18,7 +18,7 @@ class HomeFragment
     // onDestroyView.
     private val binding get() = _binding!!
 
-    private lateinit var viewModel: HomeViewModel
+    private lateinit var viewModel: HomeViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -38,9 +38,6 @@ class HomeFragment
 
     override fun onStart() {
         super.onStart()
-
-        //TODO implement with DI
-        viewModel = HomeViewModel()
 
 //        viewModel.handleEvent(HomeEvent.OnStart)
     }
