@@ -9,9 +9,10 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import dagger.hilt.android.AndroidEntryPoint
 import mk.webfactory.template.databinding.FragmentHomeBinding
+import javax.inject.Inject
 
 @AndroidEntryPoint
-class HomeFragment : Fragment() {
+class HomeFragment @Inject constructor(): Fragment() {
 
     private var _binding: FragmentHomeBinding? = null
 

@@ -49,19 +49,21 @@ class UserModule {
     fun provideUserStorage(@ApplicationContext context: Context, gson: Gson)
             : Storage<UserSession> {
         //todo provide keystore encrypted storage
-        return StorageCache(FlatFileStorage(
-            UserSession::class.java,
-            File(context.filesDir, USER_DATA_FILE),
-            JsonConverter.GsonConverter(gson)
-        ))
+        return StorageCache(
+            FlatFileStorage(
+                UserSession::class.java,
+                File(context.filesDir, USER_DATA_FILE),
+                JsonConverter.GsonConverter(gson)
+            )
+        )
     }
 
     @Provides
     @ElementsIntoSet
-    fun provideDefaultUserEventHookSet(): Set<UserEventHook<User>> = emptySet()
+    fun provideDefaultUserEventHookSet(): Set<UserEventHook<UserSession>> = emptySet()
 
     @Provides
     @IntoSet
-    fun provideUserScopeEventHook(userScopeManager: UserScopeComponentManager) =
-        UserScopeEventHook(userScopeManager)
+    fun provideUserScopeEventHook(userScopeManager: UserScopeComponentManager):
+            UserEventHook<UserSession> = UserScopeEventHook(userScopeManager)
 }
