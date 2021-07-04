@@ -1,28 +1,18 @@
 package mk.webfactory.template.di
 
 import dagger.BindsInstance
-import dagger.Subcomponent
+import dagger.hilt.DefineComponent
+import dagger.hilt.android.components.ApplicationComponent
 import mk.webfactory.template.di.scope.UserScope
-import mk.webfactory.template.feature.home.HomeRepositoryModule
 import mk.webfactory.template.model.user.User
 
 @UserScope
-@Subcomponent(
-    modules = [
-        HomeRepositoryModule::class
-        //TODO: Insert user scoped modules here (example: MockUserDataModule.class)
-    ]
-)
+@DefineComponent(parent = ApplicationComponent::class)
 interface UserScopeComponent {
 
-    val androidInjector: DispatchingAndroidInjector<Any>
-
-    @Subcomponent.Builder
+    @DefineComponent.Builder
     interface Builder {
-
-        @BindsInstance
-        fun user(user: User): Builder
-
+        fun setUser(@BindsInstance user: User): UserScopeComponent.Builder
         fun build(): UserScopeComponent
     }
 }

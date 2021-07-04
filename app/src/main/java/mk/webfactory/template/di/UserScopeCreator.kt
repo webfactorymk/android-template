@@ -39,7 +39,7 @@ class UserScopeCreator @Inject constructor(
             return
         }
         userScopeComponent = userScopeBuilder
-            .user(user)
+            .setUser(user)
             .build()
         listeners.forEach { it.onUserScopeCreated(user) }
     }
