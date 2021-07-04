@@ -4,7 +4,7 @@ import android.app.Application
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import dagger.hilt.android.HiltAndroidApp
 import io.reactivex.rxjava3.plugins.RxJavaPlugins
-import mk.webfactory.template.di.UserScopeComponentManager
+import mk.webfactory.template.di.scope.user.UserScopeComponentManager
 import mk.webfactory.template.log.CrashReportLogger
 import mk.webfactory.template.log.CrashlyticsLogger
 import mk.webfactory.template.log.DebugLogger

@@ -1,7 +1,6 @@
-package mk.webfactory.template.di
+package mk.webfactory.template.di.scope.user
 
 import dagger.hilt.EntryPoint
-import dagger.hilt.EntryPoints
 import dagger.hilt.InstallIn
 import mk.webfactory.template.feature.home.HomeRepository
 

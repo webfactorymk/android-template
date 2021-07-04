@@ -4,7 +4,7 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import mk.webfactory.storage.InMemoryStorage
-import mk.webfactory.template.di.UserScopeComponent
+import mk.webfactory.template.di.scope.user.UserScopeComponent
 import mk.webfactory.template.di.qualifier.Local
 import mk.webfactory.template.di.qualifier.Remote
 import mk.webfactory.template.model.user.User

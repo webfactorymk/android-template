@@ -1,4 +1,4 @@
-package mk.webfactory.template.di
+package mk.webfactory.template.di.scope.user
 
 import dagger.hilt.EntryPoints
 import mk.webfactory.template.model.user.User

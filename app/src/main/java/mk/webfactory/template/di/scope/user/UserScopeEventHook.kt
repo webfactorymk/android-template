@@ -1,4 +1,4 @@
-package mk.webfactory.template.di
+package mk.webfactory.template.di.scope.user
 
 import io.reactivex.rxjava3.core.Completable
 import mk.webfactory.template.model.user.UserSession

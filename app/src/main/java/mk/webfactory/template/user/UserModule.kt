@@ -16,8 +16,8 @@ import mk.webfactory.storage.JsonConverter
 import mk.webfactory.storage.Storage
 import mk.webfactory.storage.StorageCache
 import mk.webfactory.template.config.USER_DATA_FILE
-import mk.webfactory.template.di.UserScopeComponentManager
-import mk.webfactory.template.di.UserScopeEventHook
+import mk.webfactory.template.di.scope.user.UserScopeComponentManager
+import mk.webfactory.template.di.scope.user.UserScopeEventHook
 import mk.webfactory.template.di.qualifier.Internal
 import mk.webfactory.template.model.user.User
 import mk.webfactory.template.model.user.UserSession

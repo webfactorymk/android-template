@@ -5,7 +5,7 @@ import io.reactivex.rxjava3.core.Completable
 import io.reactivex.rxjava3.core.Maybe
 import mk.webfactory.template.di.qualifier.Local
 import mk.webfactory.template.di.qualifier.Remote
-import mk.webfactory.template.di.scope.UserScope
+import mk.webfactory.template.di.scope.user.UserScope
 import timber.log.Timber
 import javax.inject.Inject
 
