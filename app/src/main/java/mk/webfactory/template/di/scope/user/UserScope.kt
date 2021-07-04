@@ -1,8 +1,8 @@
-package mk.webfactory.template.di.scope
+package mk.webfactory.template.di.scope.user
 
 import javax.inject.Scope
 
 @Scope
 @MustBeDocumented
 @Retention(AnnotationRetention.RUNTIME)
-annotation class ActivityScope
+annotation class UserScope

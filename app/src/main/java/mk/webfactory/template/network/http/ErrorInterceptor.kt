@@ -21,7 +21,7 @@ class ErrorInterceptor(
         val response = chain.proceed(chain.request())
         return when (response.code) {
             400 -> handleBadRequest(response)
-            401, 403 -> handleUnauthorizedRequest(chain.request(), response)
+            401 -> handleUnauthorizedRequest(chain.request(), response)
             else -> response
         }
     }

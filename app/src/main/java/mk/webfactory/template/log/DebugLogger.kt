@@ -1,8 +1,6 @@
 package mk.webfactory.template.log
 
 import android.util.Log
-import mk.webfactory.template.model.auth.AccessToken
-import mk.webfactory.template.model.user.User
 import timber.log.Timber.DebugTree
 import java.util.*
 

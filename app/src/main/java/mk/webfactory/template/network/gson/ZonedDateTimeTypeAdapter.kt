@@ -1,10 +1,9 @@
 package mk.webfactory.template.network.gson
 
 import com.google.gson.*
-import org.threeten.bp.ZoneId
-import org.threeten.bp.ZonedDateTime
-import org.threeten.bp.format.DateTimeFormatter
 import java.lang.reflect.Type
+import java.time.ZonedDateTime
+import java.time.format.DateTimeFormatter
 
 /**
  * Note that the time zone is serialized/deserialized as is. To get local time use

@@ -1,7 +1,7 @@
 package mk.webfactory.template.network.http
 
-import io.reactivex.Observable
-import io.reactivex.disposables.Disposable
+import io.reactivex.rxjava3.core.Observable
+import io.reactivex.rxjava3.disposables.Disposable
 import mk.webfactory.template.data.rx.safeDispose
 import mk.webfactory.template.model.auth.AccessToken
 import mk.webfactory.template.model.user.UserSession

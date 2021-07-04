@@ -14,7 +14,6 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
-        <activity android:name=".feature.main.ui.MainActivity"></activity>
         <!-- TODO: Remove suppression tools:ignore -->
         <activity android:name=".feature.launcher.ui.LauncherActivity">
             <intent-filter>
@@ -25,8 +24,11 @@
         </activity>
         <activity
             android:name=".feature.home.ui.HomeActivity"
+            android:label="@string/home"
             android:launchMode="singleTask" />
-        <activity android:name=".feature.login.ui.LoginActivity" />
+        <activity
+            android:name=".feature.login.ui.LoginActivity"
+            android:label="@string/login" />
     </application>
 
 </manifest>

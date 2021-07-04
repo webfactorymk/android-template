@@ -4,7 +4,9 @@ import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import dagger.Module
 import dagger.Provides
-import io.reactivex.Observable
+import dagger.hilt.InstallIn
+import dagger.hilt.components.SingletonComponent
+import io.reactivex.rxjava3.core.Observable
 import mk.webfactory.template.BuildConfig
 import mk.webfactory.template.model.user.UserSession
 import mk.webfactory.template.network.gson.ZonedDateTimeTypeAdapter
@@ -13,13 +15,14 @@ import mk.webfactory.template.network.http.OAuthInterceptor
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
-import org.threeten.bp.ZonedDateTime
 import retrofit2.Retrofit
-import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
+import retrofit2.adapter.rxjava3.RxJava3CallAdapterFactory
 import retrofit2.converter.gson.GsonConverterFactory
+import java.time.ZonedDateTime
 import javax.inject.Named
 import javax.inject.Singleton
 
+@InstallIn(SingletonComponent::class)
 @Module
 class NetworkModule {
 
@@ -58,7 +61,7 @@ class NetworkModule {
         return Retrofit.Builder()
             .baseUrl(baseUrl)
             .client(client)
-            .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
+            .addCallAdapterFactory(RxJava3CallAdapterFactory.create())
             .addConverterFactory(GsonConverterFactory.create(gson))
             .build()
     }

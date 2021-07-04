@@ -1,6 +1,6 @@
 package mk.webfactory.storage
 
-import io.reactivex.annotations.NonNull
+import io.reactivex.rxjava3.annotations.NonNull
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import java.io.*

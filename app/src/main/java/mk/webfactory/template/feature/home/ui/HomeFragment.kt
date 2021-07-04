@@ -1,30 +1,29 @@
-package mk.webfactory.template.feature.home.ui.mvvm
+package mk.webfactory.template.feature.home.ui
 
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
+import dagger.hilt.android.AndroidEntryPoint
 import mk.webfactory.template.databinding.FragmentHomeBinding
-import mk.webfactory.template.feature.common.ui.BaseFragment
 import javax.inject.Inject
 
-class HomeView
-@Inject constructor() : BaseFragment(), IHomeContract.View {
+@AndroidEntryPoint
+class HomeFragment @Inject constructor(): Fragment() {
 
     private var _binding: FragmentHomeBinding? = null
 
-    // This property is only valid between onCreateView and
-    // onDestroyView.
-    private val binding get() = _binding!!
+    // This property is only valid between onCreateView and onDestroyView.
+    val binding get() = _binding!!
 
-    private lateinit var viewModel: HomeViewModel
+    val viewModel by viewModels<HomeViewModel>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        observe()
-        setUpClickListeners()
     }
 
     override fun onCreateView(
@@ -39,14 +38,11 @@ class HomeView
     override fun onStart() {
         super.onStart()
 
-        //TODO implement with DI
-        viewModel = HomeViewModel()
-
-        viewModel.handleEvent(HomeEvent.OnStart)
+//        viewModel.handleEvent(HomeEvent.OnStart)
     }
 
     override fun onStop() {
-        viewModel.handleEvent(HomeEvent.OnStop)
+//        viewModel.handleEvent(HomeEvent.OnStop)
         super.onStop()
     }
 
@@ -59,7 +55,7 @@ class HomeView
         binding.circularProgressView.visibility = if (active) View.VISIBLE else View.GONE
     }
 
-    override fun observe() {
+    private fun observe() {
         // This is an example how to use МVVM pattern and observe the changes from the modelView
         viewModel.progressBarState.observe(
             viewLifecycleOwner,
@@ -69,7 +65,6 @@ class HomeView
         )
     }
 
-    override fun setUpClickListeners() {
-        //TODO implement this method by passing the corresponding event to the viewModel with viewModel.handleEvent(HomeEvent) method
+    private fun setUpClickListeners() {
     }
 }

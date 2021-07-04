@@ -4,17 +4,20 @@ import android.content.Context
 import com.google.gson.Gson
 import dagger.Module
 import dagger.Provides
+import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
+import dagger.hilt.components.SingletonComponent
 import dagger.multibindings.ElementsIntoSet
 import dagger.multibindings.IntoSet
-import io.reactivex.Completable
-import io.reactivex.Observable
-import io.reactivex.subjects.BehaviorSubject
+import io.reactivex.rxjava3.core.Observable
+import io.reactivex.rxjava3.subjects.BehaviorSubject
 import mk.webfactory.storage.FlatFileStorage
 import mk.webfactory.storage.JsonConverter
 import mk.webfactory.storage.Storage
+import mk.webfactory.storage.StorageCache
 import mk.webfactory.template.config.USER_DATA_FILE
-import mk.webfactory.template.di.UserScopeCreator
-import mk.webfactory.template.di.qualifier.ApplicationContext
+import mk.webfactory.template.di.scope.user.UserScopeComponentManager
+import mk.webfactory.template.di.scope.user.UserScopeEventHook
 import mk.webfactory.template.di.qualifier.Internal
 import mk.webfactory.template.model.user.User
 import mk.webfactory.template.model.user.UserSession
@@ -22,6 +25,7 @@ import java.io.File
 import javax.inject.Named
 import javax.inject.Singleton
 
+@InstallIn(SingletonComponent::class)
 @Module
 class UserModule {
 
@@ -29,7 +33,7 @@ class UserModule {
     @Singleton
     @Internal
     fun provideUserUpdatesSubject(): BehaviorSubject<UserSession> {
-        return BehaviorSubject.create<UserSession>()
+        return BehaviorSubject.create()
     }
 
     @Provides
@@ -42,38 +46,24 @@ class UserModule {
 
     @Provides
     @Singleton
-    fun provideFlatFileStorage(@ApplicationContext context: Context, gson: Gson)
+    fun provideUserStorage(@ApplicationContext context: Context, gson: Gson)
             : Storage<UserSession> {
-        return FlatFileStorage(
+        //todo provide keystore encrypted storage
+        return StorageCache(
+            FlatFileStorage(
                 UserSession::class.java,
                 File(context.filesDir, USER_DATA_FILE),
                 JsonConverter.GsonConverter(gson)
+            )
         )
     }
 
     @Provides
     @ElementsIntoSet
-    fun provideDefaultLogoutHookSet(): Set<LogoutHook> = emptySet()
-
-    @Provides
-    @ElementsIntoSet
-    fun provideDefaultLoginHookSet(): Set<LoginHook<User>> = emptySet()
+    fun provideDefaultUserEventHookSet(): Set<UserEventHook<UserSession>> = emptySet()
 
     @Provides
     @IntoSet
-    fun provideUserScopeLoginHook(userScopeCreator: UserScopeCreator): LoginHook<UserSession> {
-        return object : LoginHook<UserSession> {
-            override fun postLogin(userSession: UserSession) =
-                    Completable.fromAction { userScopeCreator.createUserScopeComponent(userSession.user) }
-        }
-    }
-
-    @Provides
-    @IntoSet
-    fun provideUserScopeLogoutHook(userScopeCreator: UserScopeCreator): LogoutHook {
-        return object : LogoutHook {
-            override fun postLogout() =
-                    Completable.fromAction { userScopeCreator.destroyUserScopeComponent() }
-        }
-    }
+    fun provideUserScopeEventHook(userScopeManager: UserScopeComponentManager):
+            UserEventHook<UserSession> = UserScopeEventHook(userScopeManager)
 }

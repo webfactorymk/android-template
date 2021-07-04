@@ -2,7 +2,7 @@ package mk.webfactory.template.model.fcm
 
 import com.google.gson.annotations.SerializedName
 
-class DeviceFcmTokenBody(
+data class DeviceFcmTokenBody(
 
     //TODO: Rename to actual value
 
