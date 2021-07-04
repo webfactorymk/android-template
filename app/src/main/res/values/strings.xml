@@ -1,6 +1,8 @@
 <resources>
     <string name="app_name">AndroidTemplate</string>
 
+    <string name="home">Home</string>
+
     <string name="login">Login</string>
     <string name="logout">Logout</string>
     <string name="expire_session">Expire session (debug)</string>

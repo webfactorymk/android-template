@@ -24,8 +24,11 @@
         </activity>
         <activity
             android:name=".feature.home.ui.HomeActivity"
+            android:label="@string/home"
             android:launchMode="singleTask" />
-        <activity android:name=".feature.login.ui.LoginActivity" />
+        <activity
+            android:name=".feature.login.ui.LoginActivity"
+            android:label="@string/login" />
     </application>
 
 </manifest>
