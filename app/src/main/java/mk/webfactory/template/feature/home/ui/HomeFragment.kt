@@ -5,20 +5,21 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
+import dagger.hilt.android.AndroidEntryPoint
 import mk.webfactory.template.databinding.FragmentHomeBinding
 import javax.inject.Inject
 
-class HomeFragment
-@Inject constructor() : Fragment() {
+@AndroidEntryPoint
+class HomeFragment @Inject constructor() : Fragment() {
 
     private var _binding: FragmentHomeBinding? = null
 
-    // This property is only valid between onCreateView and
-    // onDestroyView.
-    private val binding get() = _binding!!
+    // This property is only valid between onCreateView and onDestroyView.
+    val binding get() = _binding!!
 
-    private lateinit var viewModel: HomeViewModel by viewModels()
+    val viewModel by viewModels<HomeViewModel>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

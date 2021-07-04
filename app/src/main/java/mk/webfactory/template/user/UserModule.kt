@@ -5,6 +5,8 @@ import com.google.gson.Gson
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
+import dagger.hilt.components.SingletonComponent
 import dagger.multibindings.ElementsIntoSet
 import dagger.multibindings.IntoSet
 import io.reactivex.rxjava3.core.Completable
@@ -14,8 +16,7 @@ import mk.webfactory.storage.FlatFileStorage
 import mk.webfactory.storage.JsonConverter
 import mk.webfactory.storage.Storage
 import mk.webfactory.template.config.USER_DATA_FILE
-import mk.webfactory.template.di.UserScopeCreator
-import mk.webfactory.template.di.qualifier.ApplicationContext
+import mk.webfactory.template.di.UserScopeComponentManager
 import mk.webfactory.template.di.qualifier.Internal
 import mk.webfactory.template.model.user.User
 import mk.webfactory.template.model.user.UserSession
@@ -63,19 +64,19 @@ class UserModule {
 
     @Provides
     @IntoSet
-    fun provideUserScopeLoginHook(userScopeCreator: UserScopeCreator): LoginHook<UserSession> {
+    fun provideUserScopeLoginHook(userScopeManager: UserScopeComponentManager): LoginHook<UserSession> {
         return object : LoginHook<UserSession> {
             override fun postLogin(userSession: UserSession) =
-                    Completable.fromAction { userScopeCreator.createUserScopeComponent(userSession.user) }
+                    Completable.fromAction { userScopeManager.createUserScopeComponent(userSession.user) }
         }
     }
 
     @Provides
     @IntoSet
-    fun provideUserScopeLogoutHook(userScopeCreator: UserScopeCreator): LogoutHook {
+    fun provideUserScopeLogoutHook(userScopeManager: UserScopeComponentManager): LogoutHook {
         return object : LogoutHook {
             override fun postLogout() =
-                    Completable.fromAction { userScopeCreator.destroyUserScopeComponent() }
+                    Completable.fromAction { userScopeManager.destroyUserScopeComponent() }
         }
     }
 }

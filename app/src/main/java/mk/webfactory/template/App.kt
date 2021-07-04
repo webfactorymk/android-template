@@ -4,15 +4,16 @@ import android.app.Application
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import dagger.hilt.android.HiltAndroidApp
 import io.reactivex.rxjava3.plugins.RxJavaPlugins
-import mk.webfactory.template.di.AppComponent
-import mk.webfactory.template.di.DaggerAppComponent
-import mk.webfactory.template.di.UserScopeCreator
+import mk.webfactory.template.di.UserScopeComponentManager
 import mk.webfactory.template.log.CrashReportLogger
 import mk.webfactory.template.log.CrashlyticsLogger
 import mk.webfactory.template.log.DebugLogger
 import mk.webfactory.template.model.user.User
+import mk.webfactory.template.model.user.UserSession
+import mk.webfactory.template.user.UserManager
 import mk.webfactory.template.util.ActivityLifeCallbacks
 import timber.log.Timber
+import javax.inject.Inject
 
 @HiltAndroidApp
 class App : Application() {
@@ -22,26 +23,34 @@ class App : Application() {
         private lateinit var crashReportLogger: CrashReportLogger
     }
 
-    val appComponent: AppComponent by lazy {
-        initializeDaggerAppComponent()
-    }
+    @Inject
+    lateinit var userScopeComponentManager: UserScopeComponentManager
+
+    @Inject
+    lateinit var userManager: UserManager<UserSession>
 
     private val activityLifeCallbacks = object : ActivityLifeCallbacks() {
 
         override fun onApplicationEnteredForeground() {
+            Timber.d("Application entered foreground")
             //TODO: Actions when application enters foreground
         }
 
-        override fun onApplicationEnteredBackground() {}
+        override fun onApplicationEnteredBackground() {
+            Timber.d("Application entered background")
+
+        }
     }
 
-    private val userScopeMonitorListener = object : UserScopeCreator.Listener {
+    private val userScopeMonitorListener = object : UserScopeComponentManager.Listener {
 
         override fun onUserScopeCreated(user: User) {
+            Timber.d("UserScope created")
             CRASH_REPORT.setLoggedInUser(user.id)
         }
 
         override fun onUserScopeDestroyed() {
+            Timber.d("UserScope destroyed")
             CRASH_REPORT.setLoggedInUser("anonymous")
         }
     }
@@ -50,14 +59,10 @@ class App : Application() {
         super.onCreate()
         RxJavaPlugins.setErrorHandler { Timber.e(it) }
         crashReportLogger = initializeLoggingEnvironment()
-        userScopeCreator.addUserScopeListener(userScopeMonitorListener)
-        appComponent.userManager.getLoggedInUserBlocking()
-            ?.let { userScopeCreator.createUserScopeComponent(it.user) }
+        userScopeComponentManager.addUserScopeListener(userScopeMonitorListener)
+        userManager.getLoggedInUserBlocking()
+            ?.let { userScopeComponentManager.createUserScopeComponent(it.user) }
         registerActivityLifecycleCallbacks(activityLifeCallbacks)
-    }
-
-    private fun initializeDaggerAppComponent(): AppComponent {
-        return DaggerAppComponent.factory().create(applicationContext)
     }
 
     private fun initializeLoggingEnvironment(): CrashReportLogger {
