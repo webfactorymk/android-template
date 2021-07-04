@@ -1,5 +1,8 @@
 <resources>
     <string name="app_name">AndroidTemplate</string>
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string> <!-- TODO: Change the application name -->
+
+    <string name="login">Login</string>
+    <string name="logout">Logout</string>
+    <string name="expire_session">Expire session (debug)</string>
+    <string name="username">username</string>
 </resources>

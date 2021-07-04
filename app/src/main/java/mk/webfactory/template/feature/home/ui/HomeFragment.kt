@@ -24,8 +24,6 @@ class HomeFragment @Inject constructor(): Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        observe()
-        setUpClickListeners()
     }
 
     override fun onCreateView(

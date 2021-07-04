@@ -13,6 +13,8 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class LauncherActivity : AppCompatActivity() {
 
+    //todo use navigation component
+
     @Inject
     lateinit var userManager: UserManager<UserSession>
 
