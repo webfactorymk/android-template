@@ -46,7 +46,7 @@ class UserScopeComponentManager @Inject constructor(
         }
         userId = user.id
         userScopeComponent = userScopeComponentProvider.get()
-            .setUser(user.id)
+            .setUser(user)
             .build()
         listeners.forEach { it.onUserScopeCreated(user) }
     }
