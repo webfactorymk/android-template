@@ -8,9 +8,11 @@ import androidx.appcompat.app.AppCompatActivity
 import dagger.hilt.android.AndroidEntryPoint
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.Single
+import io.reactivex.rxjava3.disposables.Disposable
 import io.reactivex.rxjava3.kotlin.subscribeBy
 import io.reactivex.rxjava3.schedulers.Schedulers
 import mk.webfactory.template.R
+import mk.webfactory.template.data.rx.safeDispose
 import mk.webfactory.template.databinding.ActivityLoginBinding
 import mk.webfactory.template.feature.home.ui.HomeActivity
 import mk.webfactory.template.model.auth.AccessToken
@@ -41,6 +43,8 @@ class LoginActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityLoginBinding
 
+    var userLoginDisposable: Disposable? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityLoginBinding.inflate(layoutInflater)
@@ -48,7 +52,7 @@ class LoginActivity : AppCompatActivity() {
         setContentView(view)
 
         binding.btnLogin.setOnClickListener {
-            userManager.login {
+            userLoginDisposable = userManager.login {
                 val userId = binding.editUser.text.ifEmpty { "mock-user-id-16" }.toString()
                 Single.just(
                     UserSession(
@@ -67,5 +71,10 @@ class LoginActivity : AppCompatActivity() {
                     onError = { Timber.e(it) }
                 )
         }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        userLoginDisposable.safeDispose()
     }
 }
