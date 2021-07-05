@@ -39,8 +39,8 @@ android {
             applicationIdSuffix '.mock'
 
             manifestPlaceholders = [fabric_api_key: "123fabric123"]
-            def serverUrl = "https://example.com/"
-            buildConfigField "String", "API_BASE_URL", "\"${serverUrl}api/v1/\""
+            buildConfigField "String", "API_BASE_URL", "\"https://example.com/api/\""
+            buildConfigField "String", "API_KEY", "\"my-api-key\""
         }
 
         dev {
@@ -48,17 +48,21 @@ android {
             applicationIdSuffix '.dev'
 
             //TODO configure with real data
-            manifestPlaceholders = [fabric_api_key: "123fabric123"]
-            def serverUrl = "https://example.com/"
-            buildConfigField "String", "API_BASE_URL", "\"${serverUrl}api/v1/\""
+            //TODO add api key in local.properties
+            def serverUrl = "https://api.themoviedb.org"
+            buildConfigField "String", "API_BASE_URL", "\"${serverUrl}/3/\""
+            def apiKey = hasProperty('tmdb.dev.api_key') ? tmdb.dev.api_key : ''
+            buildConfigField "String", "API_KEY", "\"${apiKey}\""
         }
         production {
             dimension 'default'
 
             //TODO configure with real data
-            manifestPlaceholders = [fabric_api_key: ""]
-            def serverUrl = ""
-            buildConfigField "String", "API_BASE_URL", "\"${serverUrl}api/v1/\""
+            //TODO add api key in local.properties
+            def serverUrl = "https://api.themoviedb.org"
+            buildConfigField "String", "API_BASE_URL", "\"${serverUrl}/3/\""
+            def apiKey = hasProperty('tmdb.prod.api_key') ? tmdb.prod.api_key : ''
+            buildConfigField "String", "API_KEY", "\"${apiKey}\""
         }
     }
 
