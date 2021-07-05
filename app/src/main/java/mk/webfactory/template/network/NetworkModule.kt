@@ -8,7 +8,11 @@ import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import io.reactivex.rxjava3.core.Observable
 import mk.webfactory.template.BuildConfig
+import mk.webfactory.template.model.movie.Movie
+import mk.webfactory.template.model.movie.Show
+import mk.webfactory.template.model.movie.TvShow
 import mk.webfactory.template.model.user.UserSession
+import mk.webfactory.template.network.gson.RuntimeTypeAdapterFactory
 import mk.webfactory.template.network.gson.ZonedDateTimeTypeAdapter
 import mk.webfactory.template.network.http.ApiKeyInterceptor
 import mk.webfactory.template.network.http.ErrorInterceptor
@@ -35,6 +39,12 @@ class NetworkModule {
                 ZonedDateTime::class.java,
                 ZonedDateTimeTypeAdapter()
             )
+            .registerTypeAdapterFactory(
+                RuntimeTypeAdapterFactory.of(Show::class.java, "media_type")
+                    .apply {
+                        registerSubtype(Movie::class.java, "movie")
+                        registerSubtype(TvShow::class.java, "tv")
+                    })
             .create()
     }
 

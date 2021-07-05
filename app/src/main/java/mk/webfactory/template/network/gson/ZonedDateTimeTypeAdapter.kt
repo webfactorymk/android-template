@@ -2,6 +2,7 @@ package mk.webfactory.template.network.gson
 
 import com.google.gson.*
 import java.lang.reflect.Type
+import java.time.ZoneId
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 

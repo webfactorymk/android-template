@@ -10,6 +10,13 @@ import javax.inject.Singleton
 @InstallIn(SingletonComponent::class)
 @Module
 class ApiServiceModule {
+
+    @Provides
+    @Singleton
+    fun provideMovieApiService(retrofit: Retrofit): MovieApiService {
+        return retrofit.create(MovieApiService::class.java)
+    }
+
     @Provides
     @Singleton
     fun provideUserService(retrofit: Retrofit): UserApiService {
