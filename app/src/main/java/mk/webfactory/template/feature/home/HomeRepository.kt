@@ -21,6 +21,11 @@ class HomeRepository @Inject constructor(
     @NonNull @param:Remote private val homeRemoteDataSource: HomeDataSource,
     @NonNull @param:Local private val homeLocalDataSource: HomeDataSource
 ) : HomeDataSource {
+
+    init {
+        Timber.d("HomeRepository: Repository created")
+    }
+
     override fun getSomething(): Maybe<Any> {
         if (homeLocalDataSource.isDataAvailable) {
             Timber.d("HomeRepository: Local data fetched")
@@ -47,6 +52,7 @@ class HomeRepository @Inject constructor(
     }
 
     fun deleteLocalData(): Completable {
+        Timber.d("HomeRepository: Deleting local data")
         return homeLocalDataSource.deleteData()
     }
 

@@ -4,6 +4,7 @@ import android.app.Application
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import dagger.hilt.android.HiltAndroidApp
 import io.reactivex.rxjava3.plugins.RxJavaPlugins
+import mk.webfactory.template.di.scope.user.UserScopeComponentEntryPoint
 import mk.webfactory.template.di.scope.user.UserScopeComponentManager
 import mk.webfactory.template.log.CrashReportLogger
 import mk.webfactory.template.log.CrashlyticsLogger
@@ -49,9 +50,10 @@ class App : Application() {
             CRASH_REPORT.setLoggedInUser(user.id)
         }
 
-        override fun onUserScopeDestroyed() {
+        override fun beforeUserScopeDestroyed(entryPoint: UserScopeComponentEntryPoint) {
             Timber.d("UserScope destroyed")
             CRASH_REPORT.setLoggedInUser("anonymous")
+            entryPoint.homeRepository().deleteData().blockingAwait()
         }
     }
 

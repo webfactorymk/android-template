@@ -42,7 +42,7 @@ class UserScopeComponentManager @Inject constructor(
     @Synchronized
     fun createUserScopeComponent(user: User) {
         if (userScopeComponent != null) {
-            //will be recreated
+            destroyUserScopeComponent()
         }
         userId = user.id
         userScopeComponent = userScopeComponentProvider.get()
@@ -56,15 +56,15 @@ class UserScopeComponentManager @Inject constructor(
         if (userScopeComponent == null) {
             return
         }
+        listeners.forEach { it.beforeUserScopeDestroyed(entryPoint) }
         userId = null
         userScopeComponent = null
-        listeners.forEach { it.onUserScopeDestroyed() }
     }
 
     interface Listener {
 
         fun onUserScopeCreated(user: User)
 
-        fun onUserScopeDestroyed()
+        fun beforeUserScopeDestroyed(entryPoint: UserScopeComponentEntryPoint)
     }
 }
