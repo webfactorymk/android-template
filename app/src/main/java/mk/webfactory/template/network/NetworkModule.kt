@@ -10,6 +10,7 @@ import io.reactivex.rxjava3.core.Observable
 import mk.webfactory.template.BuildConfig
 import mk.webfactory.template.model.user.UserSession
 import mk.webfactory.template.network.gson.ZonedDateTimeTypeAdapter
+import mk.webfactory.template.network.http.ApiKeyInterceptor
 import mk.webfactory.template.network.http.ErrorInterceptor
 import mk.webfactory.template.network.http.OAuthInterceptor
 import okhttp3.Interceptor
@@ -40,11 +41,13 @@ class NetworkModule {
     @Provides
     @Singleton
     fun provideOkHttp(
+        @Named("ApiKey") apiKeyInterceptor: Interceptor,
         @Named("OAuth") authInterceptor: Interceptor,
         @Named("Error") errorInterceptor: Interceptor,
         @Named("Logging") loggingInterceptor: Interceptor
     ): OkHttpClient {
         return OkHttpClient.Builder()
+            .addInterceptor(apiKeyInterceptor)
             .addInterceptor(authInterceptor)
             .addInterceptor(errorInterceptor)
             .addInterceptor(loggingInterceptor)
@@ -70,6 +73,18 @@ class NetworkModule {
     @Named("base.url")
     fun provideBaseUrl(): String {
         return BuildConfig.API_BASE_URL
+    }
+
+    @Provides
+    @Named("tmdb-api-key")
+    fun provideApiKey(): String {
+        return BuildConfig.API_KEY
+    }
+
+    @Provides
+    @Named("ApiKey")
+    fun provideApiKeyInterceptor(@Named("tmdb-api-key") apiKey: String): Interceptor {
+        return ApiKeyInterceptor(apiKey)
     }
 
     @Provides
