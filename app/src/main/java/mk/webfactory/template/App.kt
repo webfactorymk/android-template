@@ -53,7 +53,7 @@ class App : Application() {
         override fun beforeUserScopeDestroyed(entryPoint: UserScopeComponentEntryPoint) {
             Timber.d("UserScope destroyed")
             CRASH_REPORT.setLoggedInUser("anonymous")
-            entryPoint.homeRepository().deleteData().blockingAwait()
+            entryPoint.movieRepository().deleteCachedData().blockingAwait()
         }
     }
 

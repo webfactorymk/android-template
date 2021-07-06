@@ -11,7 +11,7 @@ class HomeViewModel @Inject constructor(
     userScopeComponentManager: UserScopeComponentManager
 ) : ViewModel() {
 
-    private val homeRepository = userScopeComponentManager.entryPoint.homeRepository()
+    private val movieRepository = userScopeComponentManager.entryPoint.movieRepository()
 
     var progressBarState = MutableLiveData<Boolean>()
 
