@@ -16,14 +16,13 @@ class HomeFragment @Inject constructor(): Fragment() {
 
     private var _binding: FragmentHomeBinding? = null
 
-    // This property is only valid between onCreateView and onDestroyView.
     val binding get() = _binding!!
 
     val viewModel by viewModels<HomeViewModel>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
+        observeViewModel()
     }
 
     override fun onCreateView(
@@ -35,36 +34,25 @@ class HomeFragment @Inject constructor(): Fragment() {
         return binding.root
     }
 
-    override fun onStart() {
-        super.onStart()
-
-//        viewModel.handleEvent(HomeEvent.OnStart)
-    }
-
-    override fun onStop() {
-//        viewModel.handleEvent(HomeEvent.OnStop)
-        super.onStop()
-    }
-
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
     }
 
-    private fun showLoadingIndicator(active: Boolean) {
-        binding.circularProgressView.visibility = if (active) View.VISIBLE else View.GONE
-    }
-
-    private fun observe() {
-        // This is an example how to use МVVM pattern and observe the changes from the modelView
-        viewModel.progressBarState.observe(
+    private fun observeViewModel() {
+        viewModel.moviesProgressBarState.observe(
             viewLifecycleOwner,
             Observer {
                 showLoadingIndicator(it)
             }
         )
+
+        //todo other progress bars
+        //todo error state
+        //todo recycler view adapter
     }
 
-    private fun setUpClickListeners() {
+    private fun showLoadingIndicator(active: Boolean) {
+        binding.circularProgressView.visibility = if (active) View.VISIBLE else View.GONE
     }
 }
