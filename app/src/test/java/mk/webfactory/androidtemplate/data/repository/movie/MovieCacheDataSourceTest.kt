@@ -2,6 +2,8 @@ package mk.webfactory.androidtemplate.data.repository.movie
 
 import mk.webfactory.template.data.DataNotFoundException
 import mk.webfactory.template.data.repository.movie.MovieCacheDataSource
+import mk.webfactory.template.model.api.PaginatedResponse
+import mk.webfactory.template.model.api.empty
 import mk.webfactory.template.model.movie.Movie
 import org.junit.Assert.*
 import org.junit.Before
@@ -20,9 +22,9 @@ class MovieCacheDataSourceTest {
     private val mockMovie2 = mock(Movie::class.java)
     private val mockMovie3 = mock(Movie::class.java)
 
-    private val itemsAtPage1 = listOf<Movie>(mockMovie1)
-    private val itemsAtPage2 = listOf<Movie>(mockMovie2)
-    private val itemsAtPage3 = listOf<Movie>(mockMovie3)
+    private val itemsAtPage1 = PaginatedResponse(1, 3, listOf<Movie>(mockMovie1))
+    private val itemsAtPage2 = PaginatedResponse(2, 3, listOf<Movie>(mockMovie2))
+    private val itemsAtPage3 = PaginatedResponse(3, 3, listOf<Movie>(mockMovie3))
 
     lateinit var dataSource: MovieCacheDataSource
 
@@ -60,12 +62,11 @@ class MovieCacheDataSourceTest {
 
     @Test
     fun testRetrieveEmpty() {
-        val emptyList: List<Movie> = emptyList()
-        val saveOpResult = dataSource.setPopularMovies(1, emptyList()).blockingGet()
+        val saveOpResult = dataSource.setPopularMovies(1, empty()).blockingGet()
         val retrievedItems = dataSource.getPopularMovies(1).blockingGet()
 
-        assertEquals(emptyList, saveOpResult)
-        assertEquals(emptyList, retrievedItems)
+        assertEquals(empty<Movie>(), saveOpResult)
+        assertEquals(empty<Movie>(), retrievedItems)
     }
 
     @Test(expected = DataNotFoundException::class)

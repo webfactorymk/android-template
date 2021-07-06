@@ -5,6 +5,7 @@ import io.reactivex.rxjava3.core.Single
 import mk.webfactory.template.di.qualifier.Local
 import mk.webfactory.template.di.qualifier.Remote
 import mk.webfactory.template.di.scope.user.UserScope
+import mk.webfactory.template.model.api.PaginatedResponse
 import mk.webfactory.template.model.movie.Movie
 import mk.webfactory.template.model.movie.Show
 import mk.webfactory.template.model.movie.TvShow
@@ -32,21 +33,21 @@ class MovieRepository @Inject constructor(
         Timber.d("MovieRepository: Repository created")
     }
 
-    override fun getPopularMovies(page: Int): Single<List<Movie>> =
+    override fun getPopularMovies(page: Int): Single<PaginatedResponse<Movie>> =
         movieCacheDataSource.getPopularMovies(page)
             .onErrorResumeNext {
                 movieRemoteDataSource.getPopularMovies(page)
                     .flatMap { items -> movieCacheDataSource.setPopularMovies(page, items) }
             }
 
-    override fun getPopularTvShows(page: Int): Single<List<TvShow>> =
+    override fun getPopularTvShows(page: Int): Single<PaginatedResponse<TvShow>> =
         movieCacheDataSource.getPopularTvShows(page)
             .onErrorResumeNext {
                 movieRemoteDataSource.getPopularTvShows(page)
                     .flatMap { items -> movieCacheDataSource.setPopularTvShows(page, items) }
             }
 
-    override fun getTrendingShows(page: Int): Single<List<Show>> =
+    override fun getTrendingShows(page: Int): Single<PaginatedResponse<Show>> =
         movieCacheDataSource.getTrendingShows(page)
             .onErrorResumeNext {
                 movieRemoteDataSource.getTrendingShows(page)

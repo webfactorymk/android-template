@@ -52,6 +52,6 @@ class MovieRemoteDataSourceTest {
     fun getTrendingGroupedResponse() {
         val retrievedItems = movieRemoteDataSource.getTrendingShows(1).blockingGet()
 
-        assertEquals(listOf(mockMovie, mockTvShow), retrievedItems)
+        assertEquals(listOf(mockMovie, mockTvShow), retrievedItems.items)
     }
 }

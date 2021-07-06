@@ -49,9 +49,9 @@ class MovieRepositoryTest {
     fun getMoviesAndSaveInCache() {
         val retrievedItems = movieRepository.getPopularMovies(1).blockingGet()
 
-        assertEquals(itemsAtPage1, retrievedItems)
+        assertEquals(page1Response, retrievedItems)
         verify(movieApiService, times(1)).getPopularMovies(1)
-        verify(movieCacheDataSource, times(1)).setPopularMovies(1, itemsAtPage1)
+        verify(movieCacheDataSource, times(1)).setPopularMovies(1, page1Response)
     }
 
     @Test
@@ -61,10 +61,10 @@ class MovieRepositoryTest {
             .andThen(movieRepository.getPopularMovies(1))
             .blockingGet()
 
-        assertEquals(itemsAtPage1, retrievedItems)
+        assertEquals(page1Response, retrievedItems)
 
         verify(movieApiService, times(1)).getPopularMovies(1)
         verify(movieCacheDataSource, times(2)).getPopularMovies(1)
-        verify(movieCacheDataSource, times(1)).setPopularMovies(1, itemsAtPage1)
+        verify(movieCacheDataSource, times(1)).setPopularMovies(1, page1Response)
     }
 }

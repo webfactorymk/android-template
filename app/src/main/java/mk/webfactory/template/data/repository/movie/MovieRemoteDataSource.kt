@@ -1,10 +1,14 @@
 package mk.webfactory.template.data.repository.movie
 
 import io.reactivex.rxjava3.core.Single
-import mk.webfactory.template.model.api.paginatedItemsMapper
-import mk.webfactory.template.model.movie.*
+import mk.webfactory.template.model.api.PaginatedResponse
+import mk.webfactory.template.model.api.empty
 import mk.webfactory.template.model.movie.MediaType.MOVIE
 import mk.webfactory.template.model.movie.MediaType.TV
+import mk.webfactory.template.model.movie.Movie
+import mk.webfactory.template.model.movie.Show
+import mk.webfactory.template.model.movie.TimeWindow
+import mk.webfactory.template.model.movie.TvShow
 import mk.webfactory.template.network.api.MovieApiService
 
 /**
@@ -15,15 +19,21 @@ class MovieRemoteDataSource(
     private val movieApiService: MovieApiService,
 ) : MovieDataSource {
 
-    override fun getPopularMovies(page: Int): Single<List<Movie>> =
-        movieApiService.getPopularMovies(page).map(paginatedItemsMapper())
+    override fun getPopularMovies(page: Int): Single<PaginatedResponse<Movie>> =
+        movieApiService.getPopularMovies(page)
 
-    override fun getPopularTvShows(page: Int): Single<List<TvShow>> =
-        movieApiService.getPopularTvShows(page).map(paginatedItemsMapper())
+    override fun getPopularTvShows(page: Int): Single<PaginatedResponse<TvShow>> =
+        movieApiService.getPopularTvShows(page)
 
-    override fun getTrendingShows(page: Int): Single<List<Show>> = Single.zip(
-        movieApiService.getTrending(page, MOVIE, TimeWindow.DAY).map(paginatedItemsMapper()),
-        movieApiService.getTrending(page, TV, TimeWindow.DAY).map(paginatedItemsMapper()),
-        { movies, tvShows -> movies + tvShows }
+    override fun getTrendingShows(page: Int): Single<PaginatedResponse<Show>> = Single.zip(
+        movieApiService.getTrending(page, MOVIE, TimeWindow.DAY).onErrorReturn { empty() },
+        movieApiService.getTrending(page, TV, TimeWindow.DAY).onErrorReturn { empty() },
+        { movies, tvShows ->
+            PaginatedResponse(
+                page = page,
+                totalPages = maxOf(movies.totalPages, tvShows.totalPages),
+                items = movies.items + tvShows.items
+            )
+        }
     )
 }

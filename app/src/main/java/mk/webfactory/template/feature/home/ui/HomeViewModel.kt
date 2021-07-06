@@ -10,6 +10,7 @@ import io.reactivex.rxjava3.kotlin.subscribeBy
 import io.reactivex.rxjava3.schedulers.Schedulers
 import mk.webfactory.template.data.rx.safeDispose
 import mk.webfactory.template.di.scope.user.UserScopeComponentManager
+import mk.webfactory.template.model.api.paginatedItemsMapper
 import mk.webfactory.template.model.movie.Movie
 import mk.webfactory.template.model.movie.Show
 import mk.webfactory.template.model.movie.TvShow
@@ -67,6 +68,7 @@ class HomeViewModel @Inject constructor(
         moviesDisposable = movieRepository.getPopularMovies(1)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
+            .map(paginatedItemsMapper())
             .subscribeBy(
                 onSuccess = {
                     _moviesProgressBarState.value = false
@@ -87,6 +89,7 @@ class HomeViewModel @Inject constructor(
         tvShowsDisposable = movieRepository.getPopularTvShows(1)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
+            .map(paginatedItemsMapper())
             .subscribeBy(
                 onSuccess = {
                     _tvShowsProgressBarState.value = false
@@ -107,6 +110,7 @@ class HomeViewModel @Inject constructor(
         trendingDisposable = movieRepository.getTrendingShows(1)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
+            .map(paginatedItemsMapper())
             .subscribeBy(
                 onSuccess = {
                     _trendingProgressBarState.value = false

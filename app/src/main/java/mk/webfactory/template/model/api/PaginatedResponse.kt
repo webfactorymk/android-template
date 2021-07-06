@@ -9,6 +9,8 @@ data class PaginatedResponse<T>(
     @field:SerializedName("results") val items: List<T>
 )
 
+fun <T> empty() = PaginatedResponse<T>(0, 0, emptyList())
+
 fun <T> paginatedItemsMapper(): Function<PaginatedResponse<T>, List<T>> {
     return Function<PaginatedResponse<T>, List<T>> { response -> response.items }
 }
