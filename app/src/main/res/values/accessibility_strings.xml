@@ -3,4 +3,5 @@
     <!-- Content description / Accessibility strings -->
 
     <string name="acc_back">Back</string>
+    <string name="acc_movie_poster">Movie poster</string>
 </resources>

@@ -1,10 +1,17 @@
 <resources>
     <string name="app_name">AndroidTemplate</string>
 
-    <string name="home">Home</string>
-
+    <!-- Login -->
     <string name="login">Login</string>
     <string name="logout">Logout</string>
     <string name="expire_session">Expire session (debug)</string>
-    <string name="username">username</string>
+    <string name="username">username - any input works</string>
+
+    <!-- Home -->
+    <string name="home">Home</string>
+    <string name="movies">Movies</string>
+    <string name="tv_shows">TV Shows</string>
+    <string name="trending">Trending</string>
+    <string name="error_generic">Ops. An error occurred :(</string>
+    <string name="error_no_items">No items :(</string>
 </resources>
