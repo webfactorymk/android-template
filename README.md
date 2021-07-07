@@ -4,7 +4,7 @@ Android template project - A simple movie client that queries themoviedb.org
 
 <br />
 
-<img src="https://github.com/webfactorymk/android-template/blob/main/diagrams/screenshot.png" alt="Light theme" width="330">
+<img src="https://github.com/webfactorymk/android-template/blob/master/diagrams/screenshot.jpg" alt="Light theme" width="330">
 
 
 ## Data Management
