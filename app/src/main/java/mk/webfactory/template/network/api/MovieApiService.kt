@@ -17,10 +17,10 @@ interface MovieApiService {
 
     @GET("trending/{mediaType}/{timeWindow}")
     fun getTrending(
-        @Query("page") page: Int = 1,
         @Path("mediaType") mediaType: MediaType,
         @Path("timeWindow") timeWindow: TimeWindow,
-    ): Single<PaginatedResponse<Show>>
+        @Query("page") page: Int = 1,
+        ): Single<PaginatedResponse<Show>>
 }
 
 fun getImageUrl(imgPath: String): String = "https://image.tmdb.org/t/p/w500/$imgPath"

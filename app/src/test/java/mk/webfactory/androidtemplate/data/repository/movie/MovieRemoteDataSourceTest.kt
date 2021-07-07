@@ -42,9 +42,9 @@ class MovieRemoteDataSourceTest {
     fun setUp() {
         movieRemoteDataSource = MovieRemoteDataSource("userId", movieApiService)
 
-        `when`(movieApiService.getTrending(eq(1), eq(MediaType.MOVIE), any()))
+        `when`(movieApiService.getTrending(eq(MediaType.MOVIE), any(), eq(1)))
             .thenReturn(Single.just(moviePage1Response))
-        `when`(movieApiService.getTrending(eq(1), eq(MediaType.TV), any()))
+        `when`(movieApiService.getTrending(eq(MediaType.TV), any(), eq(1)))
             .thenReturn(Single.just(tvShowPage1Response))
     }
 

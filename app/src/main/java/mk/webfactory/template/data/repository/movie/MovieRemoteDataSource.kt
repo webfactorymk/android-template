@@ -26,8 +26,8 @@ class MovieRemoteDataSource(
         movieApiService.getPopularTvShows(page)
 
     override fun getTrendingShows(page: Int): Single<PaginatedResponse<Show>> = Single.zip(
-        movieApiService.getTrending(page, MOVIE, TimeWindow.DAY).onErrorReturn { empty() },
-        movieApiService.getTrending(page, TV, TimeWindow.DAY).onErrorReturn { empty() },
+        movieApiService.getTrending(MOVIE, TimeWindow.DAY, page).onErrorReturn { empty() },
+        movieApiService.getTrending(TV, TimeWindow.DAY, page).onErrorReturn { empty() },
         { movies, tvShows ->
             PaginatedResponse(
                 page = page,
