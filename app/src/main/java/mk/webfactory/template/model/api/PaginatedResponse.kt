@@ -3,7 +3,7 @@ package mk.webfactory.template.model.api
 import com.google.gson.annotations.SerializedName
 import io.reactivex.rxjava3.functions.Function
 
-data class PaginatedResponse<T>(
+data class PaginatedResponse<out T>(
     @field:SerializedName("page") val page: Int,
     @field:SerializedName("total_pages") val totalPages: Int,
     @field:SerializedName("results") val items: List<T>

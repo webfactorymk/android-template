@@ -22,3 +22,5 @@ interface MovieApiService {
         @Path("timeWindow") timeWindow: TimeWindow,
     ): Single<PaginatedResponse<Show>>
 }
+
+fun getImageUrl(imgPath: String): String = "https://image.tmdb.org/t/p/w500/$imgPath"

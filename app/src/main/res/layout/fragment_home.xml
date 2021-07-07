@@ -27,19 +27,16 @@
         app:tabGravity="fill">
 
         <com.google.android.material.tabs.TabItem
-            android:id="@+id/tab_movies"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/movies" />
 
         <com.google.android.material.tabs.TabItem
-            android:id="@+id/tab_tv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/tv_shows" />
 
         <com.google.android.material.tabs.TabItem
-            android:id="@+id/tab_trending"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/trending" />
