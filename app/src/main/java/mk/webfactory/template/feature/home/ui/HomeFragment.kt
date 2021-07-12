@@ -4,9 +4,11 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
+import androidx.paging.LoadState
 import androidx.paging.PagingData
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.tabs.TabLayout
@@ -24,7 +26,7 @@ const val TV_SHOWS_TAB_INDEX: Int = 1
 const val TRENDING_TAB_INDEX: Int = 2
 
 @AndroidEntryPoint
-class HomeFragment @Inject constructor(): Fragment() {
+class HomeFragment @Inject constructor() : Fragment() {
 
     private var _binding: FragmentHomeBinding? = null
 
@@ -34,6 +36,8 @@ class HomeFragment @Inject constructor(): Fragment() {
 
     lateinit var itemViewAdapter: ShowItemViewAdapter
 
+    private var selectedTabIndex:Int = MOVIES_TAB_INDEX
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -41,9 +45,17 @@ class HomeFragment @Inject constructor(): Fragment() {
     ): View {
         _binding = FragmentHomeBinding.inflate(inflater, container, false)
         setupRecyclerView()
-        setupTabLayout()
-        getPopularMovies() //todo save tab bar state and get saved tab content
+        (savedInstanceState?.getInt("selected_tab") ?: MOVIES_TAB_INDEX).apply {
+            selectedTabIndex = this
+            setupTabLayout(this)
+            getContentForTab(this)
+        }
         return binding.root
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        outState.putInt("selected_tab", selectedTabIndex)
     }
 
     override fun onDestroyView() {
@@ -62,22 +74,33 @@ class HomeFragment @Inject constructor(): Fragment() {
         //todo go to details page
     }
 
-    private fun setupTabLayout() {
+    private fun setupTabLayout(selectedTabIndex: Int) {
+        binding.tabLayout.setScrollPosition(selectedTabIndex, 0f, true)
         binding.tabLayout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
             override fun onTabSelected(tab: TabLayout.Tab) {
-                when (tab.position) {
-                    MOVIES_TAB_INDEX -> { getPopularMovies() }
-                    TV_SHOWS_TAB_INDEX -> { getPopularTvShows() }
-                    TRENDING_TAB_INDEX -> { getTrending() }
-                }
+                this@HomeFragment.selectedTabIndex = tab.position
+                getContentForTab(tab.position)
             }
+
             override fun onTabUnselected(tab: TabLayout.Tab) {}
             override fun onTabReselected(tab: TabLayout.Tab) {}
         })
+        itemViewAdapter.addLoadStateListener { loadState ->
+            binding.circularProgressView.isVisible = loadState.refresh is LoadState.Loading
+            binding.txtError.isVisible = loadState.refresh is LoadState.Error
+        }
+    }
+
+    private fun getContentForTab(selectedTabIndex: Int) {
+        when (selectedTabIndex) {
+            MOVIES_TAB_INDEX -> getPopularMovies()
+            TV_SHOWS_TAB_INDEX -> getPopularTvShows()
+            TRENDING_TAB_INDEX -> getTrending()
+        }
     }
 
     private fun getPopularMovies() {
-        lifecycleScope.launch {
+        viewLifecycleOwner.lifecycleScope.launch {
             viewModel.popularMovies.distinctUntilChanged().collectLatest {
                 itemViewAdapter.submitData(it)
             }
@@ -85,7 +108,7 @@ class HomeFragment @Inject constructor(): Fragment() {
     }
 
     private fun getPopularTvShows() {
-        lifecycleScope.launch {
+        viewLifecycleOwner.lifecycleScope.launch {
             viewModel.popularTvShows.distinctUntilChanged().collectLatest {
                 itemViewAdapter.submitData(it)
             }
@@ -93,7 +116,7 @@ class HomeFragment @Inject constructor(): Fragment() {
     }
 
     private fun getTrending() {
-        lifecycleScope.launch {
+        viewLifecycleOwner.lifecycleScope.launch {
             itemViewAdapter.submitData(lifecycle, PagingData.empty())
             viewModel.trendingShows.distinctUntilChanged().collectLatest {
                 itemViewAdapter.submitData(it)

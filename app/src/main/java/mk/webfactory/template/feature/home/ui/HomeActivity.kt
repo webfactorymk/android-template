@@ -52,8 +52,7 @@ class HomeActivity : AppCompatActivity() {
             supportFragmentManager.findFragmentById(R.id.root_container) as HomeFragment?
         if (homeFragment == null) {
             homeFragment = injectedFragment
-            val transaction =
-                supportFragmentManager.beginTransaction()
+            val transaction = supportFragmentManager.beginTransaction()
             transaction.replace(R.id.root_container, homeFragment!!)
             transaction.commit()
         }
